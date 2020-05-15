@@ -8,22 +8,18 @@ Usage:
 
 import setuptools
 
-with open("README.MD", "r") as fh:
+with open("README.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
 
 setuptools.setup(
-    name='super32-pkg',
-    version='0.1.0',
-    description='Super32 assembler parser and utilities',
+    name='super32utils',
+    version='0.2.0',
+    description='Super32 Utils',
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    url='https://github.com/xsjad0/Super32',
-    author='xsjad0',
-    author_email='xsjad0@example.com',
+    url='https://github.com/Projektstudium-Mikroprozessor/Super32',
     packages=setuptools.find_packages(),
     install_requires=[
-        'bitstring',
-        'python-dotenv'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

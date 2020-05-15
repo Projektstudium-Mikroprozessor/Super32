@@ -4,11 +4,11 @@ from PySide2.QtGui import QIcon, Qt, QKeySequence
 from PySide2.QtCore import Slot
 from super32utils.inout.fileio import FileIO
 from super32utils.inout.fileio import ResourceManager
-from logic.emulator import Emulator
+from ..logic.emulator import Emulator
 from .editor_widget import EditorWidget
 from .emulator_widget import EmulatorDockWidget
 from .footer_widget import FooterDockWidget
-
+import os
 
 class MainWindow(QMainWindow):
     """This is the main window that holds the menu, the toolbar and the main widget"""
@@ -75,12 +75,14 @@ class MainWindow(QMainWindow):
         quit_action.triggered.connect(self.__quit)
 
     def __create_toolbar(self):
-        tb_open = QAction(QIcon("resources/open.png"), self.tr("Open"), self)
-        tb_save = QAction(QIcon("resources/save.png"), self.tr("Save"), self)
-        tb_save = QAction(QIcon("resources/save.png"), self.tr("SaveAs"), self)
-        tb_run = QAction(QIcon("resources/run.png"), self.tr("Run"), self)
-        tb_step = QAction(QIcon("resources/step.png"), self.tr("Step"), self)
-        tb_debug = QAction(QIcon("resources/debug.png"),
+        resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
+
+        tb_open = QAction(QIcon(os.path.join(resources_dir, "open.png")), self.tr("Open"), self)
+        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
+        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("SaveAs"), self)
+        tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run"), self)
+        tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step"), self)
+        tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")),
                            self.tr("Debug"), self)
         tb_separator = QAction("", self)
         tb_separator.setSeparator(True)
@@ -88,6 +90,10 @@ class MainWindow(QMainWindow):
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_run.triggered.connect(self.__run)
+
+        # TODO
+        # tb_run.triggered.connect(self.__debug)
+        # tb_run.triggered.connect(self.__step)
 
         tool_bar = self.addToolBar("Toolbar")
         tool_bar.addAction(tb_open)

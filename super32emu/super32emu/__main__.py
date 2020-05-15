@@ -1,11 +1,11 @@
 """python emulator"""
 import sys
 from PySide2.QtWidgets import QApplication
-from ui.main_window import MainWindow
+from .ui.main_window import MainWindow
 from super32utils.settings.settings import Settings
 
 
-if __name__ == "__main__":
+def main():
     Settings.load()
     APP = QApplication(sys.argv)
 
@@ -14,3 +14,7 @@ if __name__ == "__main__":
     WIDGET.show()
 
     sys.exit(APP.exec_())
+
+
+if __name__ == "__main__":
+    main()

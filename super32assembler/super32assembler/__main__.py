@@ -16,10 +16,10 @@ Options:
 from docopt import docopt
 from super32utils.inout.fileio import FileIO
 from super32utils.settings.settings import Settings
-from assembler.assembler import Assembler
-from assembler.architecture import Architectures
-from generator.generator import Generator
-from preprocessor.preprocessor import Preprocessor
+from .assembler.assembler import Assembler
+from .assembler.architecture import Architectures
+from .generator.generator import Generator
+from .preprocessor.preprocessor import Preprocessor
 
 
 def single(ARGS):
@@ -80,7 +80,7 @@ def multi(ARGS):
     generator.write(ARGS['--output'][1], zeros_constants)
 
 
-if __name__ == "__main__":
+def main():
     ARGS = docopt(__doc__)
 
     if ARGS['--output'] is None:
@@ -106,3 +106,6 @@ if __name__ == "__main__":
         multi(ARGS)
     else:
         single(ARGS)
+
+if __name__ == "__main__":
+    main()
