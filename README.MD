@@ -1,10 +1,8 @@
 # Super32 - Designing our own Microprocessor
 
-This repository contains the source code for a simple assembler / compiler for our educational processor.
+This repository contains the source code for a simple assembler/compiler for our educational processor.
 
-At the moment this repository consists of two projects. py-assembler is an assembler, written in [Python](https://www.python.org/) and Super32 is an attempt to implement an actuall backend compiler with [LLVM](https://llvm.org/).
-
-Full documentation is found on [readthedocs](super32.readthedocs.io/en/latest).
+`super32assembler` is an assembler, written in [Python](https://www.python.org/).
 
 ## Getting Started
 
@@ -12,14 +10,10 @@ These instructions will help you to get your environment ready to build, develop
 
 ### Prerequisites
 
-You'll need the following tools for pyassembler:
+You'll need the following tools for `super32assembler`:
 
 - [Python 3](https://www.python.org/)
-- Python modules defined in requirements.txt
-
-For the Super32 project you need:
-
-- [LLVM](https://llvm.org/)
+- Python modules defined in `requirements.txt`
 
 ### Write assembler code
 
@@ -29,28 +23,38 @@ Also, feel free to include [these fancy assembler directives](https://github.com
 Here are some rules you always have to keep in mind when you write some assembler code:
 
 Your code always has to start with
+
 ```Assembler
-ORG address
+ORG [address]
 START
 ```
+
 and end with an
+
 ```Assembler
 END
 ```
-assembler directives, where address MUST be greater than and be able to devide by 4.
-Define constants in your memory like this
+
+assembler directives, where address MUST be greater than and be able to divide by 4.
+
+Define constants in your memory like this:
+
 ```Assembler
 DEFINE 0
 ```
-For easier referencing the constants in your code, put a lable in front of your constant
+
+For easier referencing the constants in your code, put a label in front of your constant:
+
 ```Assembler
-const: DEFINE 0
+[constantname]: DEFINE [value]
 ```
+
+See the `examples/` directory
 
 ### Installation
 
-This python package is currently not available on official PyPi server. To install the package
-you first have to clone the git repository
+This python package is currently not available via PyPi.
+To install the package you first have to clone the git repository:
 
 ```Bash
 git clone https://github.com/xsjad0/Super32.git
@@ -63,7 +67,7 @@ git checkout X.Y.Z
 pip install .
 ```
 
-If you do not have pip installed, use the following commands
+If you do not have pip installed, use the following commands:
 
 ```Bash
 python setup.py build
@@ -72,8 +76,7 @@ python setup.py install
 
 ### Usage
 
-Navigate via cd in the super32assembler folder and provide an assembler code file
-via commandline argument.
+Navigate via `cd` into the `super32assembler` folder and provide the path to an assembler code file as command line argument.
 
 ```Bash
 cd super32assembler
@@ -92,7 +95,8 @@ Option | Default | Description
 
 ## Running the tests
 
-We use [pytest](https://docs.pytest.org/en/latest/) for testing. To run these test use:
+We use [pytest](https://docs.pytest.org/en/latest/) for testing.
+To run these test use:
 
 ```Bash
 pytest test_{test_name}.py
@@ -100,7 +104,8 @@ pytest test_{test_name}.py
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [releases on this repository](https://github.com/xsjad0/Super32/releases).
+We use [SemVer](http://semver.org/) for versioning.
+For the versions available, see the [releases on this repository](https://github.com/xsjad0/Super32/releases).
 
 ## Authors
 
@@ -110,4 +115,3 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/xsjad0/Super32/blob/master/LICENSE) file for details
-
