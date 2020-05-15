@@ -1,6 +1,6 @@
 """python emulator"""
 from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout, QWidget, QPlainTextEdit, QFormLayout, QLabel, QSizePolicy
-from PySide2.QtCore import Qt, Slot, QMargins
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QIcon, QFont
 from .register_widget import RegisterWidget
 

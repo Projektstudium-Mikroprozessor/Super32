@@ -4,9 +4,11 @@ from super32assembler.preprocessor.preprocessor import Preprocessor
 from super32assembler.assembler.architecture import Architectures
 from super32utils.inout.fileio import FileIO
 from bitstring import BitArray
+import os
+import pathlib
 
 
-class Emulator():
+class Emulator:
     """This is the logic to emulate the assembly instructions"""
 
     def __init__(self, editor_widget, emulator_widget, footer_widget):
@@ -21,7 +23,8 @@ class Emulator():
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
 
-        self.cfg = FileIO.read_json('instructionset.json')
+        path_to_instructionset = os.path.join(os.path.dirname(__file__), 'instructionset.json')
+        self.cfg = FileIO.read_json(path_to_instructionset)
         self.commands = self.cfg['commands']
         self.memory = []
 
@@ -34,6 +37,7 @@ class Emulator():
         code_address, code, zeros_constants, symboltable = preprocessor.parse(
             input_file=self.editor_widget.get_text()
         )
+
         self.memory = assembler.parse(
             code_address=code_address,
             code=code,
@@ -42,6 +46,7 @@ class Emulator():
             registers=self.cfg['registers'],
             symboltable=symboltable
         )
+
         self.emulator_widget.set_symbols(symboltable)
 
         self.__emulate()
