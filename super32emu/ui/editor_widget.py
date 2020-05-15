@@ -2,7 +2,7 @@
 from PySide2.QtWidgets import QFrame, QPlainTextEdit, QTabWidget, QVBoxLayout, QWidget
 from PySide2.QtGui import QFont
 from PySide2.QtCore import Slot, Signal
-from super32emu.logic.highlighter import SyntaxHighlighter
+from logic.highlighter import SyntaxHighlighter
 
 
 class EditorWidget(QWidget):

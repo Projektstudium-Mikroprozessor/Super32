@@ -1,4 +1,6 @@
 """python emulator"""
+import os
+
 from PySide2.QtWidgets import QAction, QFileDialog, QMainWindow
 from PySide2.QtGui import QIcon, Qt, QKeySequence
 from PySide2.QtCore import Slot
@@ -18,6 +20,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Super32 Emulator")
         self.start_path = '.'
+        self.saved_path = '.' """to open the file for mcode"""
 
         self.__create_menu()
         self.__create_toolbar()
@@ -82,12 +85,14 @@ class MainWindow(QMainWindow):
         tb_step = QAction(QIcon("resources/step.png"), self.tr("Step"), self)
         tb_debug = QAction(QIcon("resources/debug.png"),
                            self.tr("Debug"), self)
+        tb_mcode = QAction(QIcon("resources/mcode.png"), self.tr("Show Code"), self)
         tb_separator = QAction("", self)
         tb_separator.setSeparator(True)
 
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_run.triggered.connect(self.__run)
+        tb_mcode.triggered.connect(self.__mcode)
 
         tool_bar = self.addToolBar("Toolbar")
         tool_bar.addAction(tb_open)
@@ -96,6 +101,7 @@ class MainWindow(QMainWindow):
         tool_bar.addAction(tb_run)
         tool_bar.addAction(tb_debug)
         tool_bar.addAction(tb_step)
+        tool_bar.addAction(tb_mcode)
 
     @Slot()
     def __new(self):
@@ -116,6 +122,7 @@ class MainWindow(QMainWindow):
         self.start_path = '/'.join(path.split('/')[:-1])
         if path:
             content = FileIO.read_file(path)
+            self.saved_path = path
             filename = path.split('/')[-1]
             self.editor_widget.new_tab(title=filename, content=content)
 
@@ -132,7 +139,14 @@ class MainWindow(QMainWindow):
                                                               'Super32 Assembler Files (*.s32)')
         if path:
             content = self.editor_widget.textarea.toPlainText()
+            self.saved_path = path
             FileIO.write(path, content)
+
+    @Slot()
+    def __mcode(self):
+        os.system('python ../super32assembler/super32assembler.py parse --output=mcode.txt ' + self.saved_path)
+        """path gets updated whenever a file is opened or saved (saved_path variable)"""
+        os.system("notepad.exe mcode.txt")
 
     @Slot()
     def __quit(self):
