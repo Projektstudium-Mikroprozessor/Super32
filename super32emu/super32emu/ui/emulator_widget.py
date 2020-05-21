@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, 
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QIcon, QFont
 from .register_widget import RegisterWidget
+import os
 
 
 class EmulatorDockWidget(QDockWidget):
@@ -83,12 +84,14 @@ class EmulatorWidget(QWidget):
         self.register_layout.addWidget(self.register[self.index + 4])
         self.register_layout.addWidget(self.register[self.index + 5])
 
+        resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
+
         back = QPushButton()
-        back.setIcon(QIcon("resources/back.png"))
+        back.setIcon(QIcon(os.path.join(resources_dir, "back.png")))
         back.setFlat(True)
         back.clicked.connect(self.__previous_register)
         forth = QPushButton()
-        forth.setIcon(QIcon("resources/forth.png"))
+        forth.setIcon(QIcon(os.path.join(resources_dir, "forth.png")))
         forth.setFlat(True)
         forth.clicked.connect(self.__next_register)
 
