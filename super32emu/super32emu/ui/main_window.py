@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
                                                               '.',
                                                               'Super32 Assembler Files (*.s32)')
         if path:
-            content = self.editor_widget.textarea.toPlainText()
+            content = self.editor_widget.get_plain_text()
             FileIO.write(path, content)
 
     @Slot()
