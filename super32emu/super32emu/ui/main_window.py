@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Super32 Emulator")
 
         self.resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
+        self.setWindowIcon(QIcon(os.path.join(self.resources_dir, "logo_color.png")))
 
         self.start_path = '.'
 
