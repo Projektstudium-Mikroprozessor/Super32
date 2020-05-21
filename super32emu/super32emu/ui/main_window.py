@@ -10,6 +10,7 @@ from .emulator_widget import EmulatorDockWidget
 from .footer_widget import FooterDockWidget
 import os
 
+
 class MainWindow(QMainWindow):
     """This is the main window that holds the menu, the toolbar and the main widget"""
 
@@ -17,6 +18,9 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
 
         self.setWindowTitle("Super32 Emulator")
+
+        self.resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
+
         self.start_path = '.'
 
         self.__create_menu()
@@ -106,7 +110,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def __new(self):
         template = ""
-        with ResourceManager("resources/template.s32", "r") as file:
+        with ResourceManager(os.path.join(self.resources_dir, "template.s32"), "r") as file:
             template = file.read()
         self.editor_widget.new_tab(content=template)
 
