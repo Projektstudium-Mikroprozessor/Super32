@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Super32 Emulator")
         self.start_path = '.'
-        self.saved_path = '.' """to open the file for mcode"""
+        self.saved_path = '.'
 
         self.__create_menu()
         self.__create_toolbar()
@@ -128,7 +128,11 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def __save(self):
-        self.__saveas()
+        if self.saved_path != '.':
+            content = self.editor_widget.tabs.currentWidget().toPlainText()
+            FileIO.write(self.saved_path, content)
+        else:
+            self.__saveas()
 
     @Slot()
     def __saveas(self):
@@ -138,15 +142,16 @@ class MainWindow(QMainWindow):
                                                               '.',
                                                               'Super32 Assembler Files (*.s32)')
         if path:
-            content = self.editor_widget.textarea.toPlainText()
+            content = self.editor_widget.tabs.currentWidget().toPlainText()
             self.saved_path = path
             FileIO.write(path, content)
 
     @Slot()
     def __mcode(self):
-        os.system('python ../super32assembler/super32assembler.py parse --output=mcode.txt ' + self.saved_path)
-        """path gets updated whenever a file is opened or saved (saved_path variable)"""
-        os.system("notepad.exe mcode.txt")
+        if self.saved_path != '.':
+            self.__save()
+            os.system('python ../super32assembler/super32assembler.py parse --output=mcode.txt ' + self.saved_path)
+            os.system("notepad.exe mcode.txt")
 
     @Slot()
     def __quit(self):
