@@ -71,46 +71,24 @@ class EmulatorWidget(QWidget):
     def __create_register_group(self):
         self.index = 0
         self.register = []
+        self.register_layout = QGridLayout()
 
         for i in range(32):
             r = RegisterWidget('R' + str(i))
             self.register.append(r)
 
-        self.register_layout = QHBoxLayout()
-        self.register_layout.addWidget(self.register[self.index])
-        self.register_layout.addWidget(self.register[self.index + 1])
-        self.register_layout.addWidget(self.register[self.index + 2])
-        self.register_layout.addWidget(self.register[self.index + 3])
-        self.register_layout.addWidget(self.register[self.index + 4])
-        self.register_layout.addWidget(self.register[self.index + 5])
+        current_register = 0
 
-        resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
-
-        back = QPushButton()
-        back.setIcon(QIcon(os.path.join(resources_dir, "back.png")))
-        back.setFlat(True)
-        back.clicked.connect(self.__previous_register)
-        forth = QPushButton()
-        forth.setIcon(QIcon(os.path.join(resources_dir, "forth.png")))
-        forth.setFlat(True)
-        forth.clicked.connect(self.__next_register)
-
-        arrows_layout = QHBoxLayout()
-        arrows_layout.addWidget(back)
-        arrows_layout.addWidget(forth)
-
-        register_arrows_layout = QHBoxLayout()
-        register_arrows_layout.addLayout(self.register_layout)
-        register_arrows_layout.addLayout(arrows_layout)
-        register_arrows_layout.setAlignment(Qt.AlignTop)
+        for x in range(8):
+            for y in range(4):
+                r = self.register[current_register]
+                self.register_layout.addWidget(r, x, y, Qt.AlignRight)
+                current_register += 1
 
         self.program_counter = RegisterWidget("PC")
+        self.register_layout.addWidget(self.program_counter, 9, 3, alignment=Qt.AlignRight)
 
-        register_group_layout = QVBoxLayout()
-        register_group_layout.addLayout(register_arrows_layout)
-        register_group_layout.addWidget(self.program_counter)
-
-        self.register_group.setLayout(register_group_layout)
+        self.register_group.setLayout(self.register_layout)
 
     def __create_storage_group(self):
         self.storage = QPlainTextEdit()
@@ -133,33 +111,6 @@ class EmulatorWidget(QWidget):
 
         symbol = QLabel(self.tr("Symbol"))
         self.symbol_layout.addRow(self.tr("Address"), symbol)
-
-    @Slot()
-    def __next_register(self):
-        if self.index == 26:
-            return
-
-        self.index += 1
-        self.__update_register()
-
-    @Slot()
-    def __previous_register(self):
-        if self.index == 0:
-            return
-
-        self.index -= 1
-        self.__update_register()
-
-    def __update_register(self):
-        for i in reversed(range(self.register_layout.count())):
-            self.register_layout.itemAt(i).widget().setParent(None)
-
-        self.register_layout.addWidget(self.register[self.index])
-        self.register_layout.addWidget(self.register[self.index + 1])
-        self.register_layout.addWidget(self.register[self.index + 2])
-        self.register_layout.addWidget(self.register[self.index + 3])
-        self.register_layout.addWidget(self.register[self.index + 4])
-        self.register_layout.addWidget(self.register[self.index + 5])
 
     def set_register(self, index, value):
         """Sets the value of a register chosen by its index"""

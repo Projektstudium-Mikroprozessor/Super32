@@ -22,6 +22,7 @@ class RegisterWidget(QWidget):
         layout.addWidget(self.label)
         layout.addWidget(self.text_input)
         layout.addStretch()
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(layout)
 
