@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QFrame, QPlainTextEdit, QTabWidget, QVBoxLayout, Q
 from PySide2.QtGui import QFont
 from PySide2.QtCore import Slot
 from ..logic.highlighter import SyntaxHighlighter
+from .code_editor import *
 
 
 class EditorWidget(QWidget):
@@ -25,7 +26,7 @@ class EditorWidget(QWidget):
         """Append new tab"""
 
         EditorWidget.tab_count += 1
-        editor = QPlainTextEdit()
+        editor = CodeEditor()
         highlighter = SyntaxHighlighter(editor.document())
 
         editor.setFrameShape(QFrame.NoFrame)
