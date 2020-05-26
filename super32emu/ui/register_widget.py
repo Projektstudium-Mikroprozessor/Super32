@@ -1,4 +1,5 @@
 """python emulator"""
+from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget
 from PySide2.QtGui import QFont
 
@@ -32,3 +33,7 @@ class RegisterWidget(QWidget):
     def set_value(self, value):
         """Set the value of the register"""
         self.text_input.setText(value)
+        def blink_color(color="white"):
+            self.text_input.setStyleSheet("background-color: " + color)
+        blink_color("red")
+        QTimer.singleShot(2000, blink_color)
