@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, 
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QIcon, QFont
 from .register_widget import RegisterWidget
+from .memory_widget import *
 import os
 
 
@@ -113,7 +114,7 @@ class EmulatorWidget(QWidget):
         self.register_group.setLayout(register_group_layout)
 
     def __create_storage_group(self):
-        self.storage = QPlainTextEdit()
+        self.storage = MemoryWidget()
         self.storage.setFont(QFont('Fira Code', 8, QFont.Medium))
 
         storage_layout = QVBoxLayout()
@@ -175,8 +176,7 @@ class EmulatorWidget(QWidget):
 
     def set_storage(self, value):
         """Sets the value of the storage"""
-
-        self.storage.setPlainText(str(value))
+        self.storage.setPlainText(self.__beautify_storage(value))
 
     def set_symbols(self, symboltable: dict):
         """Fills the symboltable with parsed labels and addresses"""
@@ -195,3 +195,32 @@ class EmulatorWidget(QWidget):
             address.setFont(font)
             address.setText(str(symboltable[entry]))
             self.symbol_layout.addRow(address, symbol)
+
+    def __beautify_storage(self, value: str) -> str:
+        """Makes the memory string more readable.
+
+        Takes a string containing the memory content (0s and 1s)
+        Inserts a newline after four bytes
+        Inserts two blanks after a byte
+        Inserts one blank after a nibble
+        """
+        bit_occurences = 0
+        i = 0
+
+        for char in value:
+            i += 1
+
+            if char == "0" or char == "1":
+                bit_occurences += 1
+
+            if not bit_occurences % 32:
+                value = value[:i] + '\n' + value[i:]
+                i += 1
+            elif not bit_occurences % 8:
+                value = value[:i] + '  ' + value[i:]
+                i += 2
+            elif not bit_occurences % 4:
+                value = value[:i] + ' ' + value[i:]
+                i += 1
+
+        return value.strip()
