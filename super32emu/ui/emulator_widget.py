@@ -182,7 +182,7 @@ class EmulatorWidget(QWidget):
                     newc = "<span style=\" color:#ff0000;\" >" + newc + "</span>"
                 newstr += newc
             self.storage.appendHtml(newstr)
-            QTimer.singleShot(2000, self.reset_storage_color())
+            QTimer.singleShot(2000, self.reset_storage_color)
         else:
             self.storage.setPlainText(str(value))
 
