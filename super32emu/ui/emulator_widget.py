@@ -1,6 +1,7 @@
 """python emulator"""
-from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout, QWidget, QPlainTextEdit, QFormLayout, QLabel, QSizePolicy
-from PySide2.QtCore import Qt, Slot, QMargins
+from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout, \
+    QWidget, QPlainTextEdit, QFormLayout, QLabel
+from PySide2.QtCore import Qt, Slot, QTimer
 from PySide2.QtGui import QIcon, QFont
 from .register_widget import RegisterWidget
 
@@ -172,8 +173,23 @@ class EmulatorWidget(QWidget):
 
     def set_storage(self, value):
         """Sets the value of the storage"""
+        oldstr = self.storage.toPlainText()
+        newstr = ""
+        self.storage.clear()
+        if oldstr:
+            for oldc, newc in zip(oldstr, value):
+                if oldc != newc:
+                    newc = "<span style=\" color:#ff0000;\" >" + newc + "</span>"
+                newstr += newc
+            self.storage.appendHtml(newstr)
+            QTimer.singleShot(2000, self.reset_storage_color())
+        else:
+            self.storage.setPlainText(str(value))
 
-        self.storage.setPlainText(str(value))
+    def reset_storage_color(self):
+        storagestr = self.storage.toPlainText()
+        self.storage.setPlainText(storagestr)
+
 
     def set_symbols(self, symboltable: dict):
         """Fills the symboltable with parsed labels and addresses"""
