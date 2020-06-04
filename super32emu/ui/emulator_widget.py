@@ -177,14 +177,32 @@ class EmulatorWidget(QWidget):
         newstr = ""
         self.storage.clear()
         if oldstr:
+            bits = 0
             for oldc, newc in zip(oldstr, value):
+                bits += 1
                 if oldc != newc:
                     newc = "<span style=\" color:#ff0000;\" >" + newc + "</span>"
                 newstr += newc
+                if not bits % 32:
+                    newstr += "<br>"
+                elif not bits % 8:
+                    newstr += "  "
+                elif not bits % 4:
+                    newstr += " "
             self.storage.appendHtml(newstr)
             QTimer.singleShot(2000, self.reset_storage_color)
         else:
-            self.storage.setPlainText(str(value))
+            bits = 0
+            for oldc in value:
+                newstr += oldc
+                bits += 1
+                if not bits % 32:
+                    newstr += "\n"
+                elif not bits % 8:
+                    newstr += "  "
+                elif not bits % 4:
+                    newstr += " "
+            self.storage.setPlainText(str(newstr))
 
     def reset_storage_color(self):
         storagestr = self.storage.toPlainText()
