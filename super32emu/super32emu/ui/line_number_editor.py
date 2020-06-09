@@ -1,16 +1,27 @@
-from .line_number_editor import LineNumberEditor
-from PySide2.QtCore import SIGNAL, QRect, QObject
-from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter, QMouseEvent
 from PySide2.QtCore import SIGNAL, QRect
-from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter, QTextCursor
+from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter
 from PySide2.QtWidgets import QPlainTextEdit, QTextEdit
+from .line_number_area import *
 
 
-class CodeEditor(LineNumberEditor):
-    def __init__(self):
-        super(CodeEditor, self).__init__(20)
-        self.lineNumberArea.mouseReleaseEvent = self.onClicked
-        self.breakpoints = []
+class LineNumberEditor(QPlainTextEdit):
+    """
+    Editor with line numbers
+
+    https://doc.qt.io/qt-5/qtwidgets-widgets-codeeditor-example.html
+    """
+    def __init__(self, space_left=None):
+        """
+        space_left: Add more margin to the left of the line numbers
+        """
+        super().__init__()
+
+        if space_left is None:
+            self.space_left = 3
+        else:
+            self.space_left = space_left
+
+        self.lineNumberArea = LineNumberArea(self)
 
         self.connect(self, SIGNAL('blockCountChanged(int)'), self.updateLineNumberAreaWidth)
         self.connect(self, SIGNAL('updateRequest(QRect,int)'), self.updateLineNumberArea)
@@ -29,7 +40,7 @@ class CodeEditor(LineNumberEditor):
         while count >= 10:
             count /= 10
             digits += 1
-        space = 3 + self.fontMetrics().width('9') * digits
+        space = self.space_left + self.fontMetrics().width('9') * digits
         return space
 
     def updateLineNumberAreaWidth(self, _):
@@ -56,10 +67,7 @@ class CodeEditor(LineNumberEditor):
                                               self.lineNumberAreaWidth(), cr.height()))
 
     def lineNumberAreaPaintEvent(self, event):
-        width_circle = 10
         painter = QPainter(self.lineNumberArea)
-        painter.setBrush(Qt.red)
-        painter.setPen(Qt.black)
 
         painter.fillRect(event.rect(), Qt.lightGray)
 
@@ -67,57 +75,31 @@ class CodeEditor(LineNumberEditor):
         blockNumber = block.blockNumber()
         top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
         bottom = top + self.blockBoundingRect(block).height()
-        height = self.fontMetrics().height()
 
+        height = self.fontMetrics().height()
         while block.isValid() and (top <= event.rect().bottom()):
             if block.isVisible() and (bottom >= event.rect().top()):
-
-                if blockNumber in self.breakpoints:
-                    ellipse_center = top + (self.fontMetrics().height() - width_circle) / 2
-                    painter.drawEllipse(0, ellipse_center, width_circle, width_circle)
-
                 number = str(blockNumber + 1)
-                painter.drawText(0, top, self.lineNumberArea.width(), height, Qt.AlignRight, number)
+                painter.setPen(Qt.black)
+                painter.drawText(0, top, self.lineNumberArea.width(), height,
+                                   Qt.AlignRight, number)
 
             block = block.next()
             top = bottom
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber += 1
 
-    def onClicked(self, event: QMouseEvent):
-        block = self.firstVisibleBlock()
-        top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
-        bottom = top + self.blockBoundingRect(block).height()
-        mousePosY = event.y()
+    def highlightCurrentLine(self):
+        extraSelections = []
 
-        blockNumber = block.blockNumber()
+        if not self.isReadOnly():
+            selection = QTextEdit.ExtraSelection()
 
-        while block.isValid():
-            if block.isVisible() and top < mousePosY < bottom:
+            lineColor = QColor(Qt.yellow).lighter(160)
 
-                if blockNumber in self.breakpoints:
-                    self.breakpoints.remove(blockNumber)
-                else:
-                    self.breakpoints.append(blockNumber)
-                self.update()
-                return
-
-            blockNumber += 1
-            block = block.next()
-            top = bottom
-            bottom = top + self.blockBoundingRect(block).height()
-
-    def resetHighlightedLines(self):
-        self.extraSelections = []
-        self.setExtraSelections(self.extraSelections)
-
-    def highlightLine(self, line_number: int, color=Qt.yellow):
-        lineColor = QColor(color)
-
-        selection = QTextEdit.ExtraSelection()
-        selection.format.setBackground(lineColor)
-        selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-        selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
-        selection.cursor.clearSelection()
-        self.extraSelections.append(selection)
-        self.setExtraSelections(self.extraSelections)
+            selection.format.setBackground(lineColor)
+            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+            selection.cursor = self.textCursor()
+            selection.cursor.clearSelection()
+            extraSelections.append(selection)
+        self.setExtraSelections(extraSelections)
