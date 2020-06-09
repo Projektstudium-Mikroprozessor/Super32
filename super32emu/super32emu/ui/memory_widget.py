@@ -31,8 +31,9 @@ class MemoryWidget(CodeEditor):
         height = self.fontMetrics().height()
         while block.isValid() and (top <= event.rect().bottom()):
             if block.isVisible() and (bottom >= event.rect().top()):
-                number = str(blockNumber)
+                number = hex(blockNumber)[2:].upper()
                 painter.setPen(Qt.black)
+                painter.setFont(QFont('Fira Code', 8, QFont.Medium))
                 painter.drawText(0, top, self.lineNumberArea.width(), height,
                                  Qt.AlignRight, number)
 
