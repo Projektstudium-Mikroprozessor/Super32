@@ -7,6 +7,12 @@ from PySide2.QtWidgets import QPlainTextEdit, QTextEdit
 
 
 class CodeEditor(LineNumberEditor):
+    """
+    Editor with line numbers and break points
+
+    https://github.com/eyllanesc/stackoverflow/tree/master/questions/46327656
+    """
+
     def __init__(self):
         super(CodeEditor, self).__init__(20)
         self.lineNumberArea.mouseReleaseEvent = self.onClicked
