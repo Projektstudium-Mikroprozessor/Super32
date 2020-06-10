@@ -1,0 +1,29 @@
+        ORG 4
+addr:   DEFINE 20
+inc:    DEFINE 4
+        DEFINE 0
+        DEFINE 1
+
+        ORG 20
+        START
+        
+' lade konstanten
+' R10 = addresse des Datenspeichers
+' R11 = increment
+' R0 = Fib 1
+' R1 = Fib 2
+
+        LW R10,4(R31)
+        LW R11,8(R31)
+        LW R0,12(R31)
+        LW R1,16(R31)
+
+loop:   ADD R0,R0,R1
+        SW R0,0(R10)
+        ADD R10,R11,R10
+        
+        ADD R1,R0,R1
+        SW R1,0(R10)
+        ADD R10,R11,R10
+        BEQ R31,R31,loop
+        END
