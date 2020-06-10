@@ -33,3 +33,6 @@ class RegisterWidget(QWidget):
     def set_value(self, value):
         """Set the value of the register"""
         self.text_input.setText(value)
+
+    def get_value(self):
+        return self.text_input.text()
