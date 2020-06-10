@@ -206,9 +206,10 @@ class Assembler():
         return [machine_code]
 
     def __generate_start(self, start_address, zeros_constants, commands, registers):
+        branch_address = int(start_address / REG_SIZE - 1)
         branch = self.__parse_branch(
             0,
-            ['BEQ', 'R0', 'R0', "{ADDRESS}".format(ADDRESS=start_address)],
+            ['BEQ', 'R1', 'R2', "{ADDRESS}".format(ADDRESS=branch_address)],
             commands['branch'],
             registers
         )
