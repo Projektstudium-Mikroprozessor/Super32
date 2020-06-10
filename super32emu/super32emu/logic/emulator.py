@@ -5,6 +5,7 @@ from super32assembler.assembler.architecture import Architectures
 from super32utils.inout.fileio import FileIO
 from bitstring import BitArray
 import os
+import logging
 
 
 class Emulator:
@@ -50,7 +51,7 @@ class Emulator:
         self.__emulate()
 
     def __emulate(self):
-        print(f"Starting new program execution: ")
+        logging.debug(f"Starting new program execution: ")
 
         # Set the memory content to the widget
         # Fill remaining memory with zeros
@@ -60,7 +61,7 @@ class Emulator:
         self.row_counter = 0
 
         while self.row_counter < len(self.memory):
-            print(f"{self.row_counter * 4} - ", end='')
+            logging.debug(f"Executing code address {self.row_counter * 4}")
             instructionset = self.memory[self.row_counter]
             self.__parse_instructionset(instructionset)
             self.row_counter += 1
@@ -121,19 +122,19 @@ class Emulator:
         result_hex = hex(result)[2:].upper()
         self.emulator_widget.set_register(register, result_hex)
 
-        print(f"Arithmetic: Handling contents from registers {self.__get_register_index(first_source)}"
-              f" and {self.__get_register_index(second_source)}. "
-              f"Saving result to {self.__get_register_index(target)}.")
+        logging.debug(f"Arithmetic: Handling contents from registers {self.__get_register_index(first_source)}"
+                      f" and {self.__get_register_index(second_source)}. "
+                      f"Saving result to {self.__get_register_index(target)}.")
 
     def __branch(self, r2: str, r1: str, offset: str):
         if not self.__get_register_value(r2) == self.__get_register_value(r1):
-            print(f"Branch: Did not branch. Register contents of {self.__get_register_index(r1)}"
-                  f" and {self.__get_register_index(r2)} not equal")
+            logging.debug(f"Branch: Did not branch. Register contents of {self.__get_register_index(r1)}"
+                          f" and {self.__get_register_index(r2)} not equal")
             return
 
         offset_num = BitArray(bin=offset).int
         self.row_counter = (offset_num // 4) - 1
-        print(f"Branch: Continuing program execution at address {offset_num}")
+        logging.debug(f"Branch: Continuing program execution at address {offset_num}")
 
     def __load(self, r2: str, r1: str, offset: str):
         offset = BitArray(bin=offset).int
@@ -144,7 +145,7 @@ class Emulator:
         r1_num = BitArray(bin=r1).uint
         self.emulator_widget.set_register(r1_num, memory_value)
 
-        print(f"Load: Loading memory content from address {address} into register {r1_num}")
+        logging.debug(f"Load: Loading memory content from address {address} into register {r1_num}")
 
     def __save(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
@@ -153,7 +154,7 @@ class Emulator:
         value_bin = bin(value)[2:].rjust(32, '0')
         self.memory[address // 4] = value_bin
 
-        print(f"Save: Saving content from register {self.__get_register_index(r1)} to address {address}")
+        logging.debug(f"Save: Saving content from register {self.__get_register_index(r1)} to address {address}")
 
     def __get_register_index(self, target):
         for register in self.cfg['registers']:
