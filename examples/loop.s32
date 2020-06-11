@@ -1,0 +1,19 @@
+' Loops until R1 reaches R3
+
+ORG 12
+DEFINE 0
+DEFINE 1
+DEFINE 16
+
+ORG 24
+START
+LW R1,-4(R0) 
+LW R2,-4(R0)
+LW R3,-4(R0)
+
+ADD R1,R1,R2 
+SW R1,-8(R0) 
+BEQ R1,R3,1 
+BEQ R0,R0,-4 
+SW R1,-11(R0)
+END

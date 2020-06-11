@@ -1,0 +1,44 @@
+' Calculate the fibonacci numbers and write them to memory
+
+' The fibonacci numbers will be written starting from the fourth byte
+         ORG 4
+result1: DEFINE 0
+result2: DEFINE 0 
+
+
+         ORG 56
+' Values for calculation
+num1:    DEFINE 0
+num2:    DEFINE 1
+
+' Values for the loop
+counter: DEFINE 0
+inc:     DEFINE 2
+end:     DEFINE 12
+
+        ORG 76
+        START
+' Load variables to memory
+        LW R1,num1(R0)
+        LW R2,num2(R0)
+        LW R3,counter(R0)
+        LW R4,inc(R0)
+        LW R5,end(R0)
+
+' Save first fibonacci number to memory
+loop:   SW R1,result1(R3)
+' Calculate next fibonacci number
+        ADD R1,R1,R2
+' Save second fibonacci number to memory
+        SW R2,result2(R3)
+' Calculate second next fibonacci number
+        ADD R2,R1,R2
+' Increment counter
+        ADD R3,R3,R4
+' Check whether to stop
+        BEQ R3,R5,stop
+' Repeat loop
+        BEQ R0,R0,loop
+stop:   
+        END
+
