@@ -15,7 +15,7 @@ class RegisterWidget(QWidget):
             self.label.setText(text)
 
         self.text_input = QLineEdit()
-        self.text_input.setFixedWidth(35)
+        self.text_input.setFixedWidth(55)
         self.text_input.setFont(QFont('Fira Code', 8, QFont.Medium))
 
         layout = QHBoxLayout()
@@ -30,6 +30,7 @@ class RegisterWidget(QWidget):
         """Set the text of the label"""
         self.label.setText(text)
 
-    def set_value(self, value):
+    def set_value(self, value: str):
         """Set the value of the register"""
+        value = value.rjust(8, '0')
         self.text_input.setText(value)
