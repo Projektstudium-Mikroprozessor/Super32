@@ -71,6 +71,8 @@ class Emulator:
             self.emulator_widget.set_storage(
                 ''.join(self.memory).ljust(2**10, '0'))
 
+        logging.debug(f"End of program execution")
+
     def __parse_instructionset(self, instructionset: str):
         instruction = instructionset[0:6]
 
@@ -133,28 +135,29 @@ class Emulator:
             return
 
         offset_num = BitArray(bin=offset).int
-        self.row_counter = (offset_num // 4) - 1
-        logging.debug(f"Branch: Continuing program execution at address {offset_num}")
+        self.row_counter = self.row_counter + offset_num
+        logging.debug(f"Branch: Continuing program execution at address {(self.row_counter + 1) * 4}")
 
     def __load(self, r2: str, r1: str, offset: str):
-        offset = BitArray(bin=offset).int
+        offset_num = BitArray(bin=offset).int
         r2_value = self.__get_register_value(r2)
-        address = offset + r2_value
-        memory_value = BitArray(bin=self.memory[address // 4]).hex.upper()
+        address = self.row_counter + offset_num + r2_value + 1
+        memory_value = BitArray(bin=self.memory[address]).hex.upper()
 
         r1_num = BitArray(bin=r1).uint
         self.emulator_widget.set_register(r1_num, memory_value)
 
-        logging.debug(f"Load: Loading memory content from address {address} into register {r1_num}")
+        logging.debug(f"Load: Loading memory content from address {address * 4} into register {r1_num}")
 
     def __save(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
-        address = offset_num + self.__get_register_value(r2)
+        r2_value = self.__get_register_value(r2)
+        address = self.row_counter + offset_num + r2_value + 1
         value = self.__get_register_value(r1)
         value_bin = bin(value)[2:].rjust(32, '0')
-        self.memory[address // 4] = value_bin
+        self.memory[address] = value_bin
 
-        logging.debug(f"Save: Saving content from register {self.__get_register_index(r1)} to address {address}")
+        logging.debug(f"Save: Saving content from register {self.__get_register_index(r1)} to address {address * 4}")
 
     def __get_register_index(self, target):
         for register in self.cfg['registers']:
