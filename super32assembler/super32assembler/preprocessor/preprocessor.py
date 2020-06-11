@@ -47,12 +47,7 @@ class Preprocessor:
         return code_address, code, zeros_constants, self.__symboltable
 
     def __remove_comments(self, code):
-        code_copy = code[:]
-        for i, line in enumerate(code):
-            if str(line).startswith("'"):
-                code_copy[i] = ''
-
-        return code_copy
+        return [line for line in code if not str(line).startswith("'")]
 
     def __generate_symboltable(self, code):
         """ builds a dictionary within keys are the lables
