@@ -142,7 +142,7 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[2]
-        if label_or_number.isdecimal():  # offset
+        if self.__is_int(label_or_number):  # offset
             offset = int(label_or_number)
             tokens[2] = Bits(int=offset, length=16).bin
         else:  # label
@@ -181,7 +181,7 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[-1]
-        if label_or_number.isdecimal():  # absolut address
+        if self.__is_int(label_or_number):  # absolut address
             address = int(label_or_number)
             tokens[-1] = Bits(int=address, length=16).bin
         else:  # label
@@ -215,3 +215,11 @@ class Assembler():
         )
         zeros_constants[0] = ''.join(branch)
         return zeros_constants
+
+    @staticmethod
+    def __is_int(s: str) -> bool:
+        try:
+            int(s)
+            return True
+        except ValueError:
+            return False
