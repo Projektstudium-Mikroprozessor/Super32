@@ -34,7 +34,7 @@ class Preprocessor:
         )
 
         # generate storage dump with zeros from first to last address
-        zeros = self.__generate_zeros(input_file_trimmed)
+        zeros = self.__generate_zeros(input_file_without_labels)
 
         # parse assembler directives, insert constants
         # and search codes startaddress
