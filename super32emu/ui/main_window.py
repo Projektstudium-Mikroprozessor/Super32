@@ -4,12 +4,17 @@ import os
 from PySide2.QtWidgets import QAction, QFileDialog, QMainWindow
 from PySide2.QtGui import QIcon, Qt, QKeySequence
 from PySide2.QtCore import Slot
+from super32assembler.preprocessor.preprocessor import Preprocessor
+from super32assembler.assembler.architecture import *
 from super32utils.inout.fileio import FileIO
 from super32utils.inout.fileio import ResourceManager
 from logic.emulator import Emulator
 from .editor_widget import EditorWidget
 from .emulator_widget import EmulatorDockWidget
 from .footer_widget import FooterDockWidget
+from super32assembler.assembler.assembler import *
+from super32assembler.super32assembler import *
+from super32assembler.generator.generator import *
 
 
 class MainWindow(QMainWindow):
@@ -148,10 +153,28 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def __mcode(self):
-        if self.saved_path != '.':
-            self.__save()
-            os.system('python ../super32assembler/super32assembler.py parse --output=mcode.txt ' + self.saved_path)
-            os.system("notepad.exe mcode.txt")
+        Settings.load()
+        cfg = FileIO.read_json('instructionset.json')
+        input_file = self.editor_widget.get_text()
+
+        preprocessor = Preprocessor()
+        assembler = Assembler(Architectures.SINGLE)
+        generator = Generator('lines')
+
+        code_address, code, zeros_constants, symboltable = preprocessor.parse(
+            input_file=input_file
+        )
+        machine_code = assembler.parse(
+            code_address=code_address,
+            code=code,
+            zeros_constants=zeros_constants,
+            commands=cfg['commands'],
+            registers=cfg['registers'],
+            symboltable=symboltable
+        )
+        generator.write('mcode.txt', machine_code)
+        #os.system("notepad.exe mcode.txt")
+
 
     @Slot()
     def __quit(self):

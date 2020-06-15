@@ -16,10 +16,10 @@ Options:
 from docopt import docopt
 from super32utils.inout.fileio import FileIO
 from super32utils.settings.settings import Settings
-from assembler.assembler import Assembler
-from assembler.architecture import Architectures
-from generator.generator import Generator
-from preprocessor.preprocessor import Preprocessor
+from super32assembler.assembler.assembler import Assembler
+from super32assembler.assembler.architecture import Architectures
+from super32assembler.generator.generator import Generator
+from super32assembler.preprocessor.preprocessor import Preprocessor
 
 
 def single(ARGS):
