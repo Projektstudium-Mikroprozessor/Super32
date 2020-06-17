@@ -113,6 +113,13 @@ class EmulatorWidget(QWidget):
         symbol = QLabel(self.tr("Symbol"))
         self.symbol_layout.addRow(self.tr("Address"), symbol)
 
+    def get_register(self, index):
+        """Sets the value of a register chosen by its index"""
+        if index < 0 or index > 32:
+            raise Exception('Register out of index')
+
+        return self.register[index].get_value()
+
     def set_register(self, index, value):
         """Sets the value of a register chosen by its index"""
         if index < 0 or index > 32:
