@@ -139,10 +139,12 @@ class EmulatorWidget(QWidget):
     def set_symbols(self, symboltable: dict):
         """Fills the symboltable with parsed labels and addresses"""
 
-        for index in range(1, self.symbol_layout.rowCount()):
-            self.symbol_layout.removeRow(index)
+        num_rows = self.symbol_layout.rowCount()
+        for _ in range(1, num_rows):
+            self.symbol_layout.removeRow(1)
 
         font = QFont('Fira Code', 8, QFont.Medium)
+
         for entry in symboltable:
             symbol = QLineEdit()
             symbol.setReadOnly(True)
