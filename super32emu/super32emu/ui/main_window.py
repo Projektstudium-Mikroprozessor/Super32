@@ -1,14 +1,20 @@
 """python emulator"""
-from PySide2.QtWidgets import QAction, QFileDialog, QMainWindow
-from PySide2.QtGui import QIcon, Qt, QKeySequence
+import os
+
 from PySide2.QtCore import Slot
+from PySide2.QtGui import QIcon, Qt, QKeySequence
+from PySide2.QtWidgets import QAction, QFileDialog, QMainWindow
+from super32assembler.assembler.architecture import Architectures
+from super32assembler.assembler.assembler import Assembler
+from super32assembler.generator.generator import Generator
+from super32assembler.preprocessor.preprocessor import Preprocessor
 from super32utils.inout.fileio import FileIO
 from super32utils.inout.fileio import ResourceManager
-from ..logic.emulator import Emulator
+
 from .editor_widget import EditorWidget
 from .emulator_widget import EmulatorDockWidget
 from .footer_widget import FooterDockWidget
-import os
+from ..logic.emulator import Emulator
 
 
 class MainWindow(QMainWindow):
@@ -83,18 +89,20 @@ class MainWindow(QMainWindow):
         resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
 
         tb_open = QAction(QIcon(os.path.join(resources_dir, "open.png")), self.tr("Open"), self)
-        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
-        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("SaveAs"), self)
+        # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
+        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save As"), self)
         tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run"), self)
         tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step"), self)
-        tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")),
-                           self.tr("Debug"), self)
+        tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")), self.tr("Debug"), self)
+        tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
+
         tb_separator = QAction("", self)
         tb_separator.setSeparator(True)
 
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_run.triggered.connect(self.__run)
+        tb_mcode.triggered.connect(self.__mcode)
 
         # TODO
         # tb_run.triggered.connect(self.__debug)
@@ -107,6 +115,7 @@ class MainWindow(QMainWindow):
         tool_bar.addAction(tb_run)
         tool_bar.addAction(tb_debug)
         tool_bar.addAction(tb_step)
+        tool_bar.addAction(tb_mcode)
 
     @Slot()
     def __new(self):
@@ -144,6 +153,37 @@ class MainWindow(QMainWindow):
         if path:
             content = self.editor_widget.get_plain_text()
             FileIO.write(path, content)
+
+    @Slot()
+    def __mcode(self):
+        path_to_instructionset = os.path.join(os.path.dirname(__file__), '..', 'instructionset.json')
+        cfg = FileIO.read_json(path_to_instructionset)
+
+        input_file = self.editor_widget.get_text()
+
+        preprocessor = Preprocessor()
+        assembler = Assembler(Architectures.SINGLE)
+        generator = Generator('lines')
+
+        code_address, code, zeros_constants, symboltable = preprocessor.parse(
+            input_file=input_file
+        )
+
+        machine_code = assembler.parse(
+            code_address=code_address,
+            code=code,
+            zeros_constants=zeros_constants,
+            commands=cfg['commands'],
+            registers=cfg['registers'],
+            symboltable=symboltable
+        )
+
+        (path, selected_filter) = QFileDialog.getSaveFileName(self,
+                                                              'Save Machine Code File',
+                                                              '.',
+                                                              'Super32 Machine Code Files (*.m32)')
+
+        generator.write(path, machine_code)
 
     @Slot()
     def __quit(self):
