@@ -1,0 +1,20 @@
+' Simply calculates 8 + 4
+
+      ORG 4
+num1: DEFINE 8
+num2: DEFINE 4
+
+      ORG 12
+      START
+
+' Load the numbers into the registers
+      LW R10,num1(R0)
+      LW R11,num2(R0)
+
+' Calculate the result
+      ADD R10,R10,R11
+
+' Write the result to memory
+      SW R10,num2(R5)
+
+      END

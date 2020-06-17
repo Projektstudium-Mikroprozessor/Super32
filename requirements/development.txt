@@ -3,4 +3,3 @@
 autopep8
 pylint
 twine
-mkdocs

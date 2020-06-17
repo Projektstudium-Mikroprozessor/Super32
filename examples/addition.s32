@@ -1,0 +1,16 @@
+' Simply calculates 8 + 4
+
+ORG 4
+DEFINE 8
+DEFINE 4
+
+ORG 12
+START
+
+LW R10,-3(R0)
+LW R11,-3(R0)
+
+ADD R10,R10,R11
+SW R10,-6(R5)
+
+END
