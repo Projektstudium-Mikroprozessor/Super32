@@ -13,7 +13,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='super32assembler',
-    version='0.2.0',
+    version='0.3.0',
     description='Super32 Assembler',
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
