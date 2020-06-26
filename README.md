@@ -67,6 +67,8 @@ See the `examples/` directory
 
 ### Usage
 
+### Assembler
+
 Provide the path to an assembler code file as command line argument:
 
 ```Bash
@@ -82,6 +84,14 @@ Option | Default | Description
 -o/--output | \<input-file\>.o | Custom output name / path
 -g/--generator | lines | Specify output format. use ```lines``` to generate 32bit machine-code each line. Use ```stream``` to generate one single line machine-code.
 -a/--architecture | single | Specify processor architecture. use ```single``` to select single-memory architecture. Use ```multi``` to select dual-memory architecture.
+
+### Emulator
+
+Start it with:
+
+```Bash
+super32emu
+```
 
 ## Development
 
