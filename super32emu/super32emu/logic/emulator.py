@@ -30,7 +30,37 @@ class Emulator:
         self.row_counter = 0
         self.emulation_running = False
 
-    def run(self):
+    def emulate_continuous(self):
+        if self.emulation_running is False:
+            self.__run()
+
+        while self.row_counter < len(self.memory):
+            self.emulate_step()
+
+        self.__end_emulation()
+
+    def emulate_step(self):
+        if self.row_counter >= len(self.memory):
+            self.__end_emulation()
+
+        if self.emulation_running is False:
+            self.__run()
+
+        logging.debug(f"Executing code address {self.row_counter * 4}")
+        instructionset = self.memory[self.row_counter]
+        self.__parse_instructionset(instructionset)
+        self.row_counter += 1
+
+        self.__set_programm_counter()
+
+        self.emulator_widget.set_storage(
+            ''.join(self.memory).ljust(2 ** 10, '0'))
+
+    def __end_emulation(self):
+        self.emulation_running = False
+        logging.debug(f"End of program execution")
+
+    def __run(self):
         """Parse and execute the commands written in the editor"""
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
@@ -61,26 +91,6 @@ class Emulator:
         self.emulation_running = True
 
         logging.debug(f"Starting new program execution: ")
-
-    # def __continuous_emulation(self):
-    #     while self.row_counter < len(self.memory):
-    #         self.__emulate_step()
-
-    def emulate_step(self):
-        if self.row_counter >= len(self.memory):
-            self.emulation_running = False
-            logging.debug(f"End of program execution")
-            return
-
-        logging.debug(f"Executing code address {self.row_counter * 4}")
-        instructionset = self.memory[self.row_counter]
-        self.__parse_instructionset(instructionset)
-        self.row_counter += 1
-
-        self.__set_programm_counter()
-
-        self.emulator_widget.set_storage(
-            ''.join(self.memory).ljust(2 ** 10, '0'))
 
     def __parse_instructionset(self, instructionset: str):
         instruction = instructionset[0:6]

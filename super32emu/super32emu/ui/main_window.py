@@ -189,11 +189,11 @@ class MainWindow(QMainWindow):
     @Slot()
     def __run(self):
         """Runs the emulator"""
-        self.emulator.run()
+        self.emulator.emulate_continuous()
 
     @Slot()
     def __debug(self):
-        print("Debug button pressed")
+        self.emulator.emulate_step()
 
     @Slot()
     def __step(self):
