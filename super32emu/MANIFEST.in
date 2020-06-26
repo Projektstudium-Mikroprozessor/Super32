@@ -1,2 +1,2 @@
-include super32emu/logic/instructionset.json
+include super32emu/instructionset.json
 include super32emu/resources/*
