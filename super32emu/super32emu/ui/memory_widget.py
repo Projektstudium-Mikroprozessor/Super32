@@ -1,5 +1,6 @@
 from .code_editor import *
-from PySide2.QtGui import QFont
+from PySide2.QtGui import QFont, QTextOption
+
 
 class MemoryWidget(CodeEditor):
     """
@@ -14,6 +15,7 @@ class MemoryWidget(CodeEditor):
     def __init__(self):
         super().__init__()
         self.setReadOnly(True)
+        self.setWordWrapMode(QTextOption.NoWrap)
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
