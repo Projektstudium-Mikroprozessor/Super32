@@ -27,9 +27,41 @@ class Emulator:
         self.commands = self.cfg['commands']
         self.memory = []
 
-    def run(self):
-        """Parse and execute the commands written in the editor"""
+        self.row_counter = 0
+        self.emulation_running = False
 
+    def emulate_continuous(self):
+        if self.emulation_running is False:
+            self.__run()
+
+        while self.row_counter < len(self.memory):
+            self.emulate_step()
+
+        self.__end_emulation()
+
+    def emulate_step(self):
+        if self.row_counter >= len(self.memory):
+            self.__end_emulation()
+
+        if self.emulation_running is False:
+            self.__run()
+
+        logging.debug(f"Executing code address {self.row_counter * 4}")
+        instructionset = self.memory[self.row_counter]
+        self.__parse_instructionset(instructionset)
+        self.row_counter += 1
+
+        self.__set_programm_counter()
+
+        self.emulator_widget.set_storage(
+            ''.join(self.memory).ljust(2 ** 10, '0'))
+
+    def __end_emulation(self):
+        self.emulation_running = False
+        logging.debug(f"End of program execution")
+
+    def __run(self):
+        """Parse and execute the commands written in the editor"""
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
 
@@ -48,10 +80,6 @@ class Emulator:
 
         self.emulator_widget.set_symbols(symboltable)
         self.__reset_registers()
-        self.__emulate()
-
-    def __emulate(self):
-        logging.debug(f"Starting new program execution: ")
 
         # Set the memory content to the widget
         # Fill remaining memory with zeros
@@ -60,18 +88,9 @@ class Emulator:
 
         self.row_counter = 0
 
-        while self.row_counter < len(self.memory):
-            logging.debug(f"Executing code address {self.row_counter * 4}")
-            instructionset = self.memory[self.row_counter]
-            self.__parse_instructionset(instructionset)
-            self.row_counter += 1
+        self.emulation_running = True
 
-            self.__set_programm_counter()
-
-            self.emulator_widget.set_storage(
-                ''.join(self.memory).ljust(2**10, '0'))
-
-        logging.debug(f"End of program execution")
+        logging.debug(f"Starting new program execution: ")
 
     def __parse_instructionset(self, instructionset: str):
         instruction = instructionset[0:6]

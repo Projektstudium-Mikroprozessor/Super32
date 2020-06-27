@@ -92,8 +92,8 @@ class MainWindow(QMainWindow):
         # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
         tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save As"), self)
         tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run"), self)
-        tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step"), self)
         tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")), self.tr("Debug"), self)
+        tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step"), self)
         tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
 
         tb_separator = QAction("", self)
@@ -102,11 +102,9 @@ class MainWindow(QMainWindow):
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_run.triggered.connect(self.__run)
+        tb_debug.triggered.connect(self.__debug)
+        tb_step.triggered.connect(self.__step)
         tb_mcode.triggered.connect(self.__mcode)
-
-        # TODO
-        # tb_run.triggered.connect(self.__debug)
-        # tb_run.triggered.connect(self.__step)
 
         tool_bar = self.addToolBar("Toolbar")
         tool_bar.addAction(tb_open)
@@ -119,7 +117,6 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def __new(self):
-        template = ""
         with ResourceManager(os.path.join(self.resources_dir, "template.s32"), "r") as file:
             template = file.read()
         self.editor_widget.new_tab(content=template)
@@ -192,4 +189,12 @@ class MainWindow(QMainWindow):
     @Slot()
     def __run(self):
         """Runs the emulator"""
-        self.emulator.run()
+        self.emulator.emulate_continuous()
+
+    @Slot()
+    def __debug(self):
+        self.emulator.emulate_step()
+
+    @Slot()
+    def __step(self):
+        self.emulator.emulate_step()
