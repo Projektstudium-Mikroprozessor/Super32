@@ -120,12 +120,16 @@ class EmulatorWidget(QWidget):
 
         return self.register[index].get_value()
 
-    def set_register(self, index, value):
+    def set_register(self, index, value, blink: bool = True):
         """Sets the value of a register chosen by its index"""
         if index < 0 or index > 32:
             raise Exception('Register out of index')
 
-        self.register[index].set_value(str(value))
+        self.register[index].set_value(str(value), blink)
+
+    def reset_all_registers(self):
+        for rindex in range(32):
+            self.set_register(rindex, '00000000', False)
 
     def set_pc(self, value):
         """Sets the value of the program counter"""

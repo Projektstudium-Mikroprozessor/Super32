@@ -1,4 +1,5 @@
 """python emulator"""
+from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget
 from PySide2.QtGui import QFont
 
@@ -30,10 +31,21 @@ class RegisterWidget(QWidget):
         """Set the text of the label"""
         self.label.setText(text)
 
-    def set_value(self, value: str):
+    def __blink_color(self, color: str = "white"):
+        self.text_input.setStyleSheet("background-color: " + color)
+
+    def set_value(self, value: str, blink: bool = True):
         """Set the value of the register"""
         value = value.rjust(8, '0')
         self.text_input.setText(value)
+        def blink_color(color="white"):
+            self.text_input.setStyleSheet("background-color: " + color)
+        blink_color("red")
+        QTimer.singleShot(2000, blink_color)
+
+        if blink:
+            self.__blink_color("yellow")
+            QTimer.singleShot(2000, self.__blink_color)
 
     def get_value(self):
         return self.text_input.text()
