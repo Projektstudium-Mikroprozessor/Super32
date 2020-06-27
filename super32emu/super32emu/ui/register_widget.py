@@ -47,5 +47,9 @@ class RegisterWidget(QWidget):
             self.__blink_color("yellow")
             QTimer.singleShot(2000, self.__blink_color)
 
+        if blink:
+            self.__blink_color("yellow")
+            QTimer.singleShot(2000, self.__blink_color)
+
     def get_value(self):
         return self.text_input.text()
