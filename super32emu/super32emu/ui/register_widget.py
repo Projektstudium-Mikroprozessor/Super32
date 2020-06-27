@@ -38,10 +38,6 @@ class RegisterWidget(QWidget):
         """Set the value of the register"""
         value = value.rjust(8, '0')
         self.text_input.setText(value)
-        def blink_color(color="white"):
-            self.text_input.setStyleSheet("background-color: " + color)
-        blink_color("red")
-        QTimer.singleShot(2000, blink_color)
 
         if blink:
             self.__blink_color("yellow")
