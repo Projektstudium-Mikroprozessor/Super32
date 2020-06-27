@@ -16,7 +16,7 @@ class Emulator:
         self.emulator_widget = emulator_widget
         self.footer_widget = footer_widget
 
-        self.__reset_registers()
+        self.emulator_widget.reset_all_registers()
 
         self.emulator_widget.set_pc(0)
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
@@ -79,7 +79,7 @@ class Emulator:
         )
 
         self.emulator_widget.set_symbols(symboltable)
-        self.__reset_registers()
+        self.emulator_widget.reset_all_registers()
 
         # Set the memory content to the widget
         # Fill remaining memory with zeros
@@ -189,7 +189,3 @@ class Emulator:
         register_value = int(self.emulator_widget.get_register(register_num), 16)
 
         return register_value
-
-    def __reset_registers(self):
-        for rindex in range(32):
-            self.emulator_widget.set_register(rindex, '00000000')
