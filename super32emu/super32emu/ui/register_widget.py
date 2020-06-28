@@ -18,6 +18,7 @@ class RegisterWidget(QWidget):
         self.text_input = QLineEdit()
         self.text_input.setFixedWidth(55)
         self.text_input.setFont(QFont('Fira Code', 8, QFont.Medium))
+        self.text_input.setReadOnly(True)
 
         layout = QHBoxLayout()
         layout.addWidget(self.label)
