@@ -120,10 +120,6 @@ class Emulator:
                 instructionset[11:16],
                 instructionset[16:32])
 
-    def __set_programm_counter(self):
-        address_counter = self.row_counter * 4
-        self.emulator_widget.set_pc(address_counter)
-
     def __arithmetic_instruction(self, first_source: str, second_source: str, target: str, func: str):
         r1_value = self.__get_register_value(first_source)
         r2_value = self.__get_register_value(second_source)
@@ -192,3 +188,8 @@ class Emulator:
         register_value = int(self.emulator_widget.get_register(register_num), 16)
 
         return register_value
+
+    def __set_programm_counter(self):
+        address_counter = self.row_counter * 4
+        address_counter_hex = hex(address_counter)[2:].upper()
+        self.emulator_widget.set_pc(address_counter_hex)
