@@ -160,6 +160,9 @@ class EmulatorWidget(QWidget):
             address.setText(str(symboltable[entry]))
             self.symbol_layout.addRow(address, symbol)
 
+    def highlight_memory_line(self, line_number: int):
+        self.storage.highlightMemoryLine(line_number)
+
     def __beautify_storage(self, value: str) -> str:
         """Makes the memory string more readable.
 

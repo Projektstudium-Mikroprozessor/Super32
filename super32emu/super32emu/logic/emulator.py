@@ -47,6 +47,7 @@ class Emulator:
             self.__run()
 
         logging.debug(f"Executing code address {self.row_counter * 4}")
+
         instructionset = self.memory[self.row_counter]
         self.__parse_instructionset(instructionset)
         self.row_counter += 1
@@ -55,6 +56,8 @@ class Emulator:
 
         self.emulator_widget.set_storage(
             ''.join(self.memory).ljust(2 ** 10, '0'))
+
+        self.emulator_widget.highlight_memory_line(self.row_counter)
 
     def __end_emulation(self):
         self.emulation_running = False
