@@ -32,17 +32,16 @@ class RegisterWidget(QWidget):
         """Set the text of the label"""
         self.label.setText(text)
 
-    def __blink_color(self, color: str = "white"):
+    def set_background_color(self, color: str = "white"):
         self.text_input.setStyleSheet("background-color: " + color)
 
-    def set_value(self, value: str, blink: bool = True):
+    def set_value(self, value: str, highlight: bool = True, color: str = "#00ff00"):
         """Set the value of the register"""
         value = value.rjust(8, '0')
         self.text_input.setText(value)
 
-        if blink:
-            self.__blink_color("yellow")
-            QTimer.singleShot(2000, self.__blink_color)
+        if highlight:
+            self.set_background_color(color)
 
     def get_value(self):
         return self.text_input.text()
