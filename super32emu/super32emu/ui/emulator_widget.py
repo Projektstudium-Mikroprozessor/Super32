@@ -120,21 +120,32 @@ class EmulatorWidget(QWidget):
 
         return self.register[index].get_value()
 
-    def set_register(self, index, value, blink: bool = True):
+    def set_register_background(self, index, color = "white"):
+        """Resets the register background color"""
+        if index < 0 or index > 32:
+            raise Exception('Register out of index')
+
+        self.register[index].set_background_color(color)
+
+    def set_register(self, index, value, highlight: bool = True):
         """Sets the value of a register chosen by its index"""
         if index < 0 or index > 32:
             raise Exception('Register out of index')
 
-        self.register[index].set_value(str(value), blink)
+        self.register[index].set_value(str(value), highlight)
+
+    def reset_all_register_backgrounds(self):
+        for rindex in range(32):
+            self.set_register_background(rindex)
 
     def reset_all_registers(self):
         for rindex in range(32):
             self.set_register(rindex, '00000000', False)
 
-    def set_pc(self, value):
+    def set_pc(self, value, highlight: bool = True):
         """Sets the value of the program counter"""
 
-        self.program_counter.set_value(str(value))
+        self.program_counter.set_value(str(value), highlight=highlight, color="yellow")
 
     def set_storage(self, value):
         """Sets the value of the storage"""

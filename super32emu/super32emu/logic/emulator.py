@@ -20,7 +20,7 @@ class Emulator:
 
         self.emulator_widget.reset_all_registers()
 
-        self.emulator_widget.set_pc(0)
+        self.emulator_widget.set_pc(0, False)
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
 
@@ -52,6 +52,9 @@ class Emulator:
 
         logging.debug(f"Executing code address {self.row_counter * 4}")
 
+        self.emulator_widget.reset_highlighted_memory_lines()
+        self.emulator_widget.reset_all_register_backgrounds()
+
         instructionset = self.memory[self.row_counter]
         self.__parse_instructionset(instructionset)
         self.row_counter += 1
@@ -60,8 +63,6 @@ class Emulator:
 
         self.emulator_widget.set_storage(
             ''.join(self.memory).ljust(2 ** 10, '0'))
-
-        self.emulator_widget.reset_highlighted_memory_lines()
 
         self.emulator_widget.highlight_memory_line(self.row_counter)
         self.__highlight_editor_line()
