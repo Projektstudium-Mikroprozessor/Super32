@@ -3,6 +3,8 @@ from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget
 from PySide2.QtGui import QFont
 
+from .ui_style import UiStyle
+
 
 class RegisterWidget(QWidget):
     """Register widget"""
@@ -16,9 +18,9 @@ class RegisterWidget(QWidget):
             self.label.setText(text)
 
         self.text_input = QLineEdit()
-        self.text_input.setFixedWidth(55)
         self.text_input.setInputMask("HHHHHHHH")
-        self.text_input.setFont(QFont('Fira Code', 8, QFont.Medium))
+        self.text_input.setFont(UiStyle.get_font())
+        self.text_input.setFixedWidth(65)
 
         layout = QHBoxLayout()
         layout.addWidget(self.label)

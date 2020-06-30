@@ -93,7 +93,7 @@ class EmulatorWidget(QWidget):
 
     def __create_storage_group(self):
         self.storage = MemoryWidget()
-        self.storage.setFont(QFont('Fira Code', 8, QFont.Medium))
+        self.storage.setFont(UiStyle.get_font())
 
         storage_layout = QVBoxLayout()
 
@@ -161,7 +161,7 @@ class EmulatorWidget(QWidget):
         for _ in range(1, num_rows):
             self.symbol_layout.removeRow(1)
 
-        font = QFont('Fira Code', 8, QFont.Medium)
+        font = UiStyle.get_font()
 
         for entry in symboltable:
             symbol = QLineEdit()

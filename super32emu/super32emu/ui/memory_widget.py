@@ -2,6 +2,8 @@ from .code_editor import *
 from PySide2.QtGui import QFont, QTextOption
 from PySide2.QtGui import QTextCursor
 
+from .ui_style import UiStyle
+
 
 class MemoryWidget(LineNumberEditor):
     """
@@ -36,7 +38,7 @@ class MemoryWidget(LineNumberEditor):
             if block.isVisible() and (bottom >= event.rect().top()):
                 number = hex(blockNumber)[2:].upper()
                 painter.setPen(Qt.black)
-                painter.setFont(QFont('Fira Code', 8, QFont.Medium))
+                painter.setFont(UiStyle.get_font())
                 painter.drawText(0, top, self.lineNumberArea.width(), height,
                                  Qt.AlignRight, number)
 
