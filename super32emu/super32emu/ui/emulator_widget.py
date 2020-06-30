@@ -142,6 +142,9 @@ class EmulatorWidget(QWidget):
         for rindex in range(32):
             self.set_register(rindex, '00000000', False)
 
+    def reset_pc_background(self):
+        self.program_counter.set_background_color()
+
     def set_pc(self, value, highlight: bool = True):
         """Sets the value of the program counter"""
 

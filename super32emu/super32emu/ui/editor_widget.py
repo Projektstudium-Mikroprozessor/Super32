@@ -49,6 +49,10 @@ class EditorWidget(QWidget):
         editor = self.tabs.currentWidget()
         return editor.toPlainText().split("\n")
 
+    def editor_readonly(self, readonly: bool = True):
+        editor = self.tabs.currentWidget()
+        editor.setReadOnly(readonly)
+
     def highlight_line(self, line_number: int):
         editor = self.tabs.currentWidget()
         editor.highlightLine(line_number)
