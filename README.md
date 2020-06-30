@@ -93,6 +93,8 @@ Start it with:
 super32emu
 ```
 
+![Super32Emu](emulator.gif)
+
 ## Development
 
 ### Setup
