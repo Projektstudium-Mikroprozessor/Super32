@@ -178,6 +178,7 @@ class Emulator:
         self.emulator_widget.set_register(r1_num, memory_value)
 
         logging.debug(f"Load: Loading memory content from address {address * 4} into register {r1_num}")
+        self.changed_memory_address = address
 
     def __save(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
