@@ -39,6 +39,4 @@ loop:   SW R1,result1(R3)
         BEQ R3,R5,stop
 ' Repeat loop
         BEQ R0,R0,loop
-stop:   
-        END
-
+stop:   END
