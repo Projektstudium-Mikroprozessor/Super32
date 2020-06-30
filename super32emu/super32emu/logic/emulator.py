@@ -27,6 +27,7 @@ class Emulator:
         self.commands = self.cfg['commands']
         self.memory = []
 
+        self.editor_line_numbers = None
         self.row_counter = 0
         self.emulation_running = False
 
@@ -58,6 +59,7 @@ class Emulator:
             ''.join(self.memory).ljust(2 ** 10, '0'))
 
         self.emulator_widget.highlight_memory_line(self.row_counter)
+        self.__highlight_editor_line()
 
     def __end_emulation(self):
         self.emulation_running = False
@@ -68,12 +70,12 @@ class Emulator:
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
 
-        code_address, code, zeros_constants, symboltable = preprocessor.parse(
+        self.code_address, code, zeros_constants, symboltable, self.editor_line_numbers = preprocessor.parse(
             input_file=self.editor_widget.get_text()
         )
 
         self.memory = assembler.parse(
-            code_address=code_address,
+            code_address=self.code_address,
             code=code,
             zeros_constants=zeros_constants,
             commands=self.cfg['commands'],
@@ -193,3 +195,13 @@ class Emulator:
         address_counter = self.row_counter * 4
         address_counter_hex = hex(address_counter)[2:].upper()
         self.emulator_widget.set_pc(address_counter_hex)
+
+    def __highlight_editor_line(self):
+        # TODO Fix bug with END directive
+        row_counter_at_start_directive = self.row_counter == 0
+        if row_counter_at_start_directive:
+            return
+
+        current_address_without_offset = self.row_counter - self.code_address // 4
+        current_editor_line = self.editor_line_numbers[current_address_without_offset]
+        self.editor_widget.highlight_line(current_editor_line)

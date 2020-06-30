@@ -1,5 +1,5 @@
 from PySide2.QtCore import SIGNAL, QRect
-from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter
+from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter, QTextCursor
 from PySide2.QtWidgets import QPlainTextEdit, QTextEdit
 from .line_number_area import *
 
@@ -17,7 +17,6 @@ class CodeEditor(QPlainTextEdit):
 
         self.connect(self, SIGNAL('blockCountChanged(int)'), self.updateLineNumberAreaWidth)
         self.connect(self, SIGNAL('updateRequest(QRect,int)'), self.updateLineNumberArea)
-        self.connect(self, SIGNAL('cursorPositionChanged()'), self.highlightCurrentLine)
 
         # It is necessary to calculate the line number area width when the editor is created
         self.updateLineNumberAreaWidth(0)
@@ -81,17 +80,14 @@ class CodeEditor(QPlainTextEdit):
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber += 1
 
-    def highlightCurrentLine(self):
+    def highlightLine(self, line_number: int):
         extraSelections = []
+        lineColor = QColor(Qt.yellow)
 
-        if not self.isReadOnly():
-            selection = QTextEdit.ExtraSelection()
-
-            lineColor = QColor(Qt.yellow).lighter(160)
-
-            selection.format.setBackground(lineColor)
-            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-            selection.cursor = self.textCursor()
-            selection.cursor.clearSelection()
-            extraSelections.append(selection)
+        selection = QTextEdit.ExtraSelection()
+        selection.format.setBackground(lineColor)
+        selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+        selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
+        selection.cursor.clearSelection()
+        extraSelections.append(selection)
         self.setExtraSelections(extraSelections)

@@ -46,15 +46,3 @@ class MemoryWidget(CodeEditor):
 
             # Start of next line is four bytes apart from previous line start
             blockNumber += 4
-
-    def highlightMemoryLine(self, line_number: int):
-        extraSelections = []
-        lineColor = QColor(Qt.yellow)
-
-        selection = QTextEdit.ExtraSelection()
-        selection.format.setBackground(lineColor)
-        selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-        selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
-        selection.cursor.clearSelection()
-        extraSelections.append(selection)
-        self.setExtraSelections(extraSelections)
