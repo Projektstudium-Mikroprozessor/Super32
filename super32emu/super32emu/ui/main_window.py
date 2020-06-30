@@ -91,29 +91,40 @@ class MainWindow(QMainWindow):
         tb_open = QAction(QIcon(os.path.join(resources_dir, "open.png")), self.tr("Open"), self)
         # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
         tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save As"), self)
+        tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
         tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run"), self)
         tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")), self.tr("Debug"), self)
         tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step"), self)
-        tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
+        tb_stop = QAction(QIcon(os.path.join(resources_dir, "stop.png")), self.tr("Stop"), self)
 
         tb_separator = QAction("", self)
         tb_separator.setSeparator(True)
 
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
+        tb_mcode.triggered.connect(self.__mcode)
         tb_run.triggered.connect(self.__run)
         tb_debug.triggered.connect(self.__debug)
+        tb_stop.triggered.connect(self.__stop)
         tb_step.triggered.connect(self.__step)
-        tb_mcode.triggered.connect(self.__mcode)
+
+        tb_step.setEnabled(False)
+        tb_stop.setEnabled(False)
 
         tool_bar = self.addToolBar("Toolbar")
         tool_bar.addAction(tb_open)
         tool_bar.addAction(tb_save)
+        tool_bar.addAction(tb_mcode)
         tool_bar.addAction(tb_separator)
         tool_bar.addAction(tb_run)
         tool_bar.addAction(tb_debug)
         tool_bar.addAction(tb_step)
-        tool_bar.addAction(tb_mcode)
+        tool_bar.addAction(tb_stop)
+
+        self.tb_run = tb_run
+        self.tb_debug = tb_debug
+        self.tb_step = tb_step
+        self.tb_stop = tb_stop
 
     @Slot()
     def __new(self):
@@ -189,12 +200,24 @@ class MainWindow(QMainWindow):
     @Slot()
     def __run(self):
         """Runs the emulator"""
+        self.__toggle_debug_actions(True)
         self.emulator.emulate_continuous()
 
     @Slot()
     def __debug(self):
-        self.emulator.emulate_step()
+        self.__toggle_debug_actions(True)
+        self.emulator.run()
 
     @Slot()
     def __step(self):
         self.emulator.emulate_step()
+
+    @Slot()
+    def __stop(self):
+        self.__toggle_debug_actions(False)
+        self.emulator.end_emulation()
+
+    def __toggle_debug_actions(self, emulation_running: bool = True):
+        self.tb_debug.setEnabled(not emulation_running)
+        self.tb_step.setEnabled(emulation_running)
+        self.tb_stop.setEnabled(emulation_running)

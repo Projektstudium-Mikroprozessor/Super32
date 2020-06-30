@@ -84,6 +84,7 @@ class CodeEditor(QPlainTextEdit):
 
     def resetHighlightedLines(self):
         self.extraSelections = []
+        self.setExtraSelections(self.extraSelections)
 
     def highlightLine(self, line_number: int, color=Qt.yellow):
         lineColor = QColor(color)

@@ -36,19 +36,14 @@ class Emulator:
 
     def emulate_continuous(self):
         if self.emulation_running is False:
-            self.__run()
+            self.run()
 
         while self.row_counter < len(self.memory):
             self.emulate_step()
 
-        self.__end_emulation()
-
     def emulate_step(self):
         if self.row_counter >= len(self.memory):
-            self.__end_emulation()
-
-        if self.emulation_running is False:
-            self.__run()
+            return
 
         logging.debug(f"Executing code address {self.row_counter * 4}")
 
@@ -71,11 +66,22 @@ class Emulator:
             self.emulator_widget.highlight_memory_line(self.changed_memory_address, Qt.green)
             self.changed_memory_address = None
 
-    def __end_emulation(self):
+    def end_emulation(self):
+        # Reset GUI
+        self.editor_widget.editor_readonly(False)
+        self.emulator_widget.set_pc(0, False)
+        self.emulator_widget.reset_pc_background()
+        self.emulator_widget.set_storage(''.ljust(2 ** 10, '0'))
+        self.emulator_widget.set_symbols({"-": "-"})
+        self.editor_widget.reset_highlighted_lines()
+        self.emulator_widget.reset_all_registers()
+        self.emulator_widget.reset_highlighted_memory_lines()
+        self.emulator_widget.reset_all_register_backgrounds()
+
         self.emulation_running = False
         logging.debug(f"End of program execution")
 
-    def __run(self):
+    def run(self):
         """Parse and execute the commands written in the editor"""
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
@@ -104,6 +110,7 @@ class Emulator:
         self.row_counter = 0
 
         self.emulation_running = True
+        self.editor_widget.editor_readonly()
 
         logging.debug(f"Starting new program execution: ")
 
