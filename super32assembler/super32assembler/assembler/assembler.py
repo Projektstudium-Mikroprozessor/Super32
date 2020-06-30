@@ -187,10 +187,8 @@ class Assembler():
         else:  # label
             address = self.__validate_label(label_or_number)
             offset = address - current_address
-            if offset < 0:
-                offset -= REG_SIZE  # adjustment due to pc + 4
-                # adjustment due to offset << 2
-                offset = int(offset / REG_SIZE)
+            offset -= REG_SIZE
+            offset = int(offset / REG_SIZE)
             tokens[-1] = Bits(int=offset, length=16).bin
 
         self.__validate_bits(''.join(tokens))
