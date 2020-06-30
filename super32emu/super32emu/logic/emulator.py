@@ -207,11 +207,12 @@ class Emulator:
         self.emulator_widget.set_pc(address_counter_hex)
 
     def __highlight_editor_line(self):
-        # TODO Fix bug with END directive
         row_counter_at_start_directive = self.row_counter == 0
         if row_counter_at_start_directive:
             return
 
         current_address_without_offset = self.row_counter - self.code_address // 4
         current_editor_line = self.editor_line_numbers[current_address_without_offset]
+
+        self.editor_widget.reset_highlighted_lines()
         self.editor_widget.highlight_line(current_editor_line)

@@ -82,7 +82,7 @@ class CodeEditor(QPlainTextEdit):
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber += 1
 
-    def resetHighlightedMemoryLines(self):
+    def resetHighlightedLines(self):
         self.extraSelections = []
 
     def highlightLine(self, line_number: int, color=Qt.yellow):

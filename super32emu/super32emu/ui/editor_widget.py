@@ -53,6 +53,10 @@ class EditorWidget(QWidget):
         editor = self.tabs.currentWidget()
         editor.highlightLine(line_number)
 
+    def reset_highlighted_lines(self):
+        editor = self.tabs.currentWidget()
+        editor.resetHighlightedLines()
+
     @Slot()
     def __on_close_tab(self, index):
         """Close tab on button-press"""

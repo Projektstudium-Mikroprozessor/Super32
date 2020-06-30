@@ -164,7 +164,7 @@ class EmulatorWidget(QWidget):
         self.storage.highlightLine(line_number, color)
 
     def reset_highlighted_memory_lines(self):
-        self.storage.resetHighlightedMemoryLines()
+        self.storage.resetHighlightedLines()
 
     def __beautify_storage(self, value: str) -> str:
         """Makes the memory string more readable.
