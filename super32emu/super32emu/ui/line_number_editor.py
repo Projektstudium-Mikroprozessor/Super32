@@ -29,6 +29,8 @@ class LineNumberEditor(QPlainTextEdit):
         # It is necessary to calculate the line number area width when the editor is created
         self.updateLineNumberAreaWidth(0)
 
+        self.extraSelections = []
+
     def lineNumberAreaWidth(self):
         """
         The lineNumberAreaWidth() function calculates the width of the LineNumberArea widget.
@@ -88,14 +90,18 @@ class LineNumberEditor(QPlainTextEdit):
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber += 1
 
-    def highlightLine(self, line_number: int):
-        extraSelections = []
-        lineColor = QColor(Qt.yellow)
+    def resetHighlightedLines(self):
+        self.extraSelections = []
+        self.setExtraSelections(self.extraSelections)
+
+    def highlightLine(self, line_number: int, color=Qt.yellow):
+        lineColor = QColor(color)
 
         selection = QTextEdit.ExtraSelection()
         selection.format.setBackground(lineColor)
         selection.format.setProperty(QTextFormat.FullWidthSelection, True)
         selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
         selection.cursor.clearSelection()
-        extraSelections.append(selection)
-        self.setExtraSelections(extraSelections)
+        self.extraSelections.append(selection)
+        self.setExtraSelections(self.extraSelections)
+
