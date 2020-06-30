@@ -36,19 +36,14 @@ class Emulator:
 
     def emulate_continuous(self):
         if self.emulation_running is False:
-            self.__run()
+            self.run()
 
         while self.row_counter < len(self.memory):
             self.emulate_step()
 
-        self.end_emulation()
-
     def emulate_step(self):
         if self.row_counter >= len(self.memory):
-            self.end_emulation()
-
-        if self.emulation_running is False:
-            self.__run()
+            return
 
         logging.debug(f"Executing code address {self.row_counter * 4}")
 
@@ -86,7 +81,7 @@ class Emulator:
         self.emulation_running = False
         logging.debug(f"End of program execution")
 
-    def __run(self):
+    def run(self):
         """Parse and execute the commands written in the editor"""
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
