@@ -94,3 +94,6 @@ class CodeEditor(LineNumberEditor):
             block = block.next()
             top = bottom
             bottom = top + self.blockBoundingRect(block).height()
+
+    def is_breakpoint_set(self, line: int) -> bool:
+        return line in self.breakpoints

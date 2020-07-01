@@ -49,6 +49,10 @@ class EditorWidget(QWidget):
         editor = self.tabs.currentWidget()
         return editor.toPlainText().split("\n")
 
+    def is_breakpoint_set(self, line: int) -> bool:
+        editor = self.tabs.currentWidget()
+        return editor.is_breakpoint_set(line)
+
     def editor_readonly(self, readonly: bool = True):
         editor = self.tabs.currentWidget()
         editor.setReadOnly(readonly)
