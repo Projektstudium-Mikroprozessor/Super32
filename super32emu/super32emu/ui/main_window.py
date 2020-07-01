@@ -190,8 +190,8 @@ class MainWindow(QMainWindow):
                                                               'Save Machine Code File',
                                                               '.',
                                                               'Super32 Machine Code Files (*.m32)')
-
-        generator.write(path, machine_code)
+        if path:
+            generator.write(path, machine_code)
 
     @Slot()
     def __quit(self):
