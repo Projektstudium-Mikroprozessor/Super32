@@ -161,6 +161,8 @@ class MainWindow(QMainWindow):
         if path:
             content = self.editor_widget.get_plain_text()
             FileIO.write(path, content)
+            filename = os.path.basename(path)
+            self.editor_widget.set_tab_title(filename)
 
     @Slot()
     def __mcode(self):

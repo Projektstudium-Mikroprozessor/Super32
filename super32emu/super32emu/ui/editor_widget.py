@@ -43,6 +43,10 @@ class EditorWidget(QWidget):
             self.tabs.setTabText(tab_index, title)
         self.tabs.setCurrentIndex(tab_index)
 
+    def set_tab_title(self, title):
+        tab_index = self.tabs.currentIndex()
+        self.tabs.setTabText(tab_index, title)
+
     def get_plain_text(self):
         editor = self.tabs.currentWidget()
         return editor.toPlainText()
