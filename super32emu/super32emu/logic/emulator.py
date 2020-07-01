@@ -33,12 +33,18 @@ class Emulator:
         self.row_counter = 0
         self.changed_memory_address = None
         self.emulation_running = False
+        self.__flag_breakpoint = False
 
     def emulate_continuous(self):
         if self.emulation_running is False:
             self.run()
 
         while self.row_counter < len(self.memory):
+            if self.editor_widget.is_breakpoint_set(self.__get_current_editor_line()) and not self.__flag_breakpoint:
+                self.__flag_breakpoint = True
+                break
+
+            self.__flag_breakpoint = False
             self.emulate_step()
 
     def emulate_step(self):
@@ -215,13 +221,17 @@ class Emulator:
         address_counter_hex = hex(address_counter)[2:].upper()
         self.emulator_widget.set_pc(address_counter_hex)
 
-    def __highlight_editor_line(self):
+    def __get_current_editor_line(self) -> int:
         row_counter_at_start_directive = self.row_counter == 0
         if row_counter_at_start_directive:
             return
 
         current_address_without_offset = self.row_counter - self.code_address // 4
-        current_editor_line = self.editor_line_numbers[current_address_without_offset]
+        return self.editor_line_numbers[current_address_without_offset]
 
+    def __highlight_editor_line(self):
         self.editor_widget.reset_highlighted_lines()
-        self.editor_widget.highlight_line(current_editor_line)
+        current_editor_line = self.__get_current_editor_line()
+
+        if not current_editor_line is None:
+            self.editor_widget.highlight_line(current_editor_line)

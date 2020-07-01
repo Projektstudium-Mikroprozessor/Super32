@@ -1,40 +1,24 @@
 from PySide2.QtCore import SIGNAL, QRect
-from PySide2.QtGui import QColor, Qt, QTextFormat, QPainter, QTextCursor
-from PySide2.QtWidgets import QPlainTextEdit, QTextEdit
-from .line_number_area import *
+from PySide2.QtGui import QMouseEvent
+from PySide2.QtGui import Qt, QPainter
+
+from .line_number_editor import LineNumberEditor
 
 
-class CodeEditor(QPlainTextEdit):
+class CodeEditor(LineNumberEditor):
     """
-    CodeEditor with line numbers
+    Editor with line numbers and break points
 
-    https://doc.qt.io/qt-5/qtwidgets-widgets-codeeditor-example.html
+    https://github.com/eyllanesc/stackoverflow/tree/master/questions/46327656
     """
 
     def __init__(self):
-        super().__init__()
-        self.lineNumberArea = LineNumberArea(self)
-
-        self.connect(self, SIGNAL('blockCountChanged(int)'), self.updateLineNumberAreaWidth)
-        self.connect(self, SIGNAL('updateRequest(QRect,int)'), self.updateLineNumberArea)
+        super(CodeEditor, self).__init__(20)
+        self.lineNumberArea.mouseReleaseEvent = self.onClicked
+        self.breakpoints = []
 
         # It is necessary to calculate the line number area width when the editor is created
         self.updateLineNumberAreaWidth(0)
-
-        self.extraSelections = []
-
-    def lineNumberAreaWidth(self):
-        """
-        The lineNumberAreaWidth() function calculates the width of the LineNumberArea widget.
-        We take the number of digits in the last line of the editor and multiply that with the maximum width of a digit.
-        """
-        digits = 1
-        count = max(1, self.blockCount())
-        while count >= 10:
-            count /= 10
-            digits += 1
-        space = 3 + self.fontMetrics().width('9') * digits
-        return space
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
@@ -60,7 +44,10 @@ class CodeEditor(QPlainTextEdit):
                                               self.lineNumberAreaWidth(), cr.height()))
 
     def lineNumberAreaPaintEvent(self, event):
+        width_circle = 10
         painter = QPainter(self.lineNumberArea)
+        painter.setBrush(Qt.red)
+        painter.setPen(Qt.black)
 
         painter.fillRect(event.rect(), Qt.lightGray)
 
@@ -68,31 +55,45 @@ class CodeEditor(QPlainTextEdit):
         blockNumber = block.blockNumber()
         top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
         bottom = top + self.blockBoundingRect(block).height()
-
         height = self.fontMetrics().height()
+
         while block.isValid() and (top <= event.rect().bottom()):
             if block.isVisible() and (bottom >= event.rect().top()):
+
+                if blockNumber in self.breakpoints:
+                    ellipse_center = top + (self.fontMetrics().height() - width_circle) / 2
+                    painter.drawEllipse(0, ellipse_center, width_circle, width_circle)
+
                 number = str(blockNumber + 1)
-                painter.setPen(Qt.black)
-                painter.drawText(0, top, self.lineNumberArea.width(), height,
-                                   Qt.AlignRight, number)
+                painter.drawText(0, top, self.lineNumberArea.width(), height, Qt.AlignRight, number)
 
             block = block.next()
             top = bottom
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber += 1
 
-    def resetHighlightedLines(self):
-        self.extraSelections = []
-        self.setExtraSelections(self.extraSelections)
+    def onClicked(self, event: QMouseEvent):
+        block = self.firstVisibleBlock()
+        top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
+        bottom = top + self.blockBoundingRect(block).height()
+        mousePosY = event.y()
 
-    def highlightLine(self, line_number: int, color=Qt.yellow):
-        lineColor = QColor(color)
+        blockNumber = block.blockNumber()
 
-        selection = QTextEdit.ExtraSelection()
-        selection.format.setBackground(lineColor)
-        selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-        selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
-        selection.cursor.clearSelection()
-        self.extraSelections.append(selection)
-        self.setExtraSelections(self.extraSelections)
+        while block.isValid():
+            if block.isVisible() and top < mousePosY < bottom:
+
+                if blockNumber in self.breakpoints:
+                    self.breakpoints.remove(blockNumber)
+                else:
+                    self.breakpoints.append(blockNumber)
+                self.update()
+                return
+
+            blockNumber += 1
+            block = block.next()
+            top = bottom
+            bottom = top + self.blockBoundingRect(block).height()
+
+    def is_breakpoint_set(self, line: int) -> bool:
+        return line in self.breakpoints

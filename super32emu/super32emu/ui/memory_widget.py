@@ -3,7 +3,7 @@ from PySide2.QtGui import QFont, QTextOption
 from PySide2.QtGui import QTextCursor
 
 
-class MemoryWidget(CodeEditor):
+class MemoryWidget(LineNumberEditor):
     """
     Like CodeEditor, but...
 
