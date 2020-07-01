@@ -173,7 +173,7 @@ class MainWindow(QMainWindow):
         assembler = Assembler(Architectures.SINGLE)
         generator = Generator('lines')
 
-        code_address, code, zeros_constants, symboltable = preprocessor.parse(
+        code_address, code, zeros_constants, symboltable, _ = preprocessor.parse(
             input_file=input_file
         )
 

@@ -35,7 +35,7 @@ def single(ARGS):
     assembler = Assembler(Architectures.SINGLE)
     generator = Generator(ARGS['--generator'])
 
-    code_address, code, zeros_constants, symboltable = preprocessor.parse(
+    code_address, code, zeros_constants, symboltable, _ = preprocessor.parse(
         input_file=input_file
     )
     machine_code = assembler.parse(
