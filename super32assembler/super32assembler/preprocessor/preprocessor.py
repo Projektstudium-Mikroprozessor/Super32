@@ -26,7 +26,7 @@ class Preprocessor:
         file_stripped = [(str.strip(input_file[i]), i)
                          for i in range(0, len(input_file))
                          if str.strip(input_file[i])
-                         and not str(input_file[i]).startswith("'")]
+                         and not str(input_file[i]).lstrip().startswith("'")]
 
         # store labels + address in symboltable-dictionary
         file_without_labels = self.__generate_symboltable(file_stripped)
