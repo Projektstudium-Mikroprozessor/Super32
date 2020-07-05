@@ -150,11 +150,18 @@ class MainWindow(QMainWindow):
         if path:
             content = FileIO.read_file(path)
             filename = path.split('/')[-1]
-            self.editor_widget.new_tab(title=filename, content=content)
+            tab_index = self.editor_widget.new_tab(title=filename, content=content)
+            self.editor_widget.set_new_tab_file_path(tab_index, path)
 
     @Slot()
     def __save(self):
-        self.__saveas()
+        if not self.editor_widget.exists_file_path():
+            self.__saveas()
+            return
+
+        content = self.editor_widget.get_plain_text()
+        file_path = self.editor_widget.get_file_path()
+        FileIO.write(file_path, content)
 
     @Slot()
     def __saveas(self):
@@ -168,6 +175,7 @@ class MainWindow(QMainWindow):
             FileIO.write(path, content)
             filename = os.path.basename(path)
             self.editor_widget.set_tab_title(filename)
+            self.editor_widget.set_current_tab_file_path(path)
 
     @Slot()
     def __mcode(self):

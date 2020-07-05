@@ -18,13 +18,15 @@ class EditorWidget(QWidget):
 
         self.tabs = QTabWidget()
         self.tabs.setTabsClosable(True)
-        self.tabs.setMovable(True)
+        self.tabs.setMovable(False)
         self.tabs.tabCloseRequested.connect(self.__on_close_tab)
         layout = QVBoxLayout()
         layout.addWidget(self.tabs)
         self.setLayout(layout)
 
-    def new_tab(self, title="", content=""):
+        self.__open_file_paths = []
+
+    def new_tab(self, title="", content="") -> int:
         """Append new tab"""
 
         EditorWidget.tab_count += 1
@@ -42,6 +44,31 @@ class EditorWidget(QWidget):
         if title:
             self.tabs.setTabText(tab_index, title)
         self.tabs.setCurrentIndex(tab_index)
+
+        self.__open_file_paths.append(None)
+
+        return tab_index
+
+    def exists_file_path(self) -> bool:
+        try:
+            exists_file_path = self.__open_file_paths[self.tabs.currentIndex()] is not None
+        except IndexError:
+            exists_file_path = False
+
+        return exists_file_path
+
+    def get_file_path(self) -> str:
+        return self.__open_file_paths[self.tabs.currentIndex()]
+
+    def set_current_tab_file_path(self, path):
+        self.__open_file_paths[self.tabs.currentIndex()] = path
+
+    def set_new_tab_file_path(self, tab_index: int, path: str) -> bool:
+        try:
+            self.__open_file_paths[tab_index] = path
+            return True
+        except IndexError:
+            return False
 
     def set_tab_title(self, title):
         tab_index = self.tabs.currentIndex()
@@ -75,3 +102,4 @@ class EditorWidget(QWidget):
     def __on_close_tab(self, index):
         """Close tab on button-press"""
         self.tabs.removeTab(index)
+        self.__open_file_paths.pop(index)
