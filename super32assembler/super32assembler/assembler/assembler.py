@@ -142,17 +142,12 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[2]
-        if self.__is_int(label_or_number):  # offset
+        if self.__is_int(label_or_number):
             offset = int(label_or_number)
             tokens[2] = Bits(int=offset, length=16).bin
         else:  # label
             address = self.__validate_label(label_or_number)
-            offset = address - current_address
-            if offset < 0:
-                offset -= REG_SIZE  # adjustment due to pc + 4
-                # adjustment due to offset << 2
-                offset = int(offset / REG_SIZE)
-            tokens[2] = Bits(int=offset, length=16).bin
+            tokens[2] = Bits(int=address, length=16).bin
 
         self.__validate_bits(''.join(tokens))
 
@@ -181,7 +176,7 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[-1]
-        if self.__is_int(label_or_number):  # absolut address
+        if self.__is_int(label_or_number):  # absolute address
             address = int(label_or_number)
             tokens[-1] = Bits(int=address, length=16).bin
         else:  # label
