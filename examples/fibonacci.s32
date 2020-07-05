@@ -13,8 +13,8 @@ num2:    DEFINE 1
 
 ' Values for the loop
 counter: DEFINE 0
-inc:     DEFINE 2
-end:     DEFINE 12
+inc:     DEFINE 8
+end:     DEFINE 48
 
         ORG 76
         START
