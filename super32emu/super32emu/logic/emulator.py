@@ -74,15 +74,20 @@ class Emulator:
 
     def end_emulation(self):
         # Reset GUI
-        self.editor_widget.editor_readonly(False)
         self.emulator_widget.set_pc(0, False)
         self.emulator_widget.reset_pc_background()
         self.emulator_widget.set_storage(''.ljust(2 ** 10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
-        self.editor_widget.reset_highlighted_lines()
         self.emulator_widget.reset_all_registers()
         self.emulator_widget.reset_highlighted_memory_lines()
         self.emulator_widget.reset_all_register_backgrounds()
+
+        try:
+            self.editor_widget.editor_readonly(False)
+            self.editor_widget.reset_highlighted_lines()
+        except AttributeError:
+            # Happens when no editor tab is open anymore
+            pass
 
         self.emulation_running = False
         logging.debug(f"End of program execution")
