@@ -184,7 +184,7 @@ class Emulator:
     def __load(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
         r2_value = self.__get_register_value(r2)
-        address = self.row_counter + offset_num + r2_value + 1
+        address = (offset_num + r2_value) // 4
         memory_value = BitArray(bin=self.memory[address]).hex.upper()
 
         r1_num = BitArray(bin=r1).uint
@@ -196,7 +196,7 @@ class Emulator:
     def __save(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
         r2_value = self.__get_register_value(r2)
-        address = self.row_counter + offset_num + r2_value + 1
+        address = (offset_num + r2_value) // 4
         value = self.__get_register_value(r1)
         value_bin = bin(value)[2:].rjust(32, '0')
         self.memory[address] = value_bin
