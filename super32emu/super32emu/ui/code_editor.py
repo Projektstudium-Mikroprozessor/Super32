@@ -1,5 +1,5 @@
 from PySide2.QtCore import SIGNAL, QRect
-from PySide2.QtGui import QMouseEvent
+from PySide2.QtGui import QMouseEvent, QFontMetrics, QKeyEvent
 from PySide2.QtGui import Qt, QPainter
 
 from .line_number_editor import LineNumberEditor
@@ -22,6 +22,13 @@ class CodeEditor(LineNumberEditor):
 
         # It is necessary to calculate the line number area width when the editor is created
         self.updateLineNumberAreaWidth(0)
+
+    def keyPressEvent(self, e: QKeyEvent):
+        if e.key() == Qt.Key_Tab:
+            tc = self.textCursor()
+            tc.insertText("    ")
+            return
+        return super(CodeEditor, self).keyPressEvent(e)
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
