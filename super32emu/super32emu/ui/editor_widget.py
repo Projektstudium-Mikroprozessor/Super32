@@ -1,9 +1,7 @@
 """python emulator"""
 from PySide2.QtWidgets import QFrame, QPlainTextEdit, QTabWidget, QVBoxLayout, QWidget
-from PySide2.QtGui import QFont
 from PySide2.QtCore import Slot
 
-from .ui_style import UiStyle
 from ..logic.highlighter import SyntaxHighlighter
 from .code_editor import *
 
@@ -34,7 +32,6 @@ class EditorWidget(QWidget):
         highlighter = SyntaxHighlighter(editor.document())
 
         editor.setFrameShape(QFrame.NoFrame)
-        editor.setFont(UiStyle.get_font(point_size=12))
         editor.setPlainText(content)
         tab_index = self.tabs.addTab(
             editor,

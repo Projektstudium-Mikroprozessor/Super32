@@ -3,6 +3,7 @@ from PySide2.QtGui import QMouseEvent
 from PySide2.QtGui import Qt, QPainter
 
 from .line_number_editor import LineNumberEditor
+from .ui_style import UiStyle
 
 
 class CodeEditor(LineNumberEditor):
@@ -16,6 +17,8 @@ class CodeEditor(LineNumberEditor):
         super(CodeEditor, self).__init__(20)
         self.lineNumberArea.mouseReleaseEvent = self.onClicked
         self.breakpoints = []
+
+        self.setFont(UiStyle.get_font(point_size=12))
 
         # It is necessary to calculate the line number area width when the editor is created
         self.updateLineNumberAreaWidth(0)
