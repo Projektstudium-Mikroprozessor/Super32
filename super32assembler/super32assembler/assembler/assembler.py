@@ -67,6 +67,11 @@ class Assembler():
                 bitcode,
                 zeros_constants
             )
+            machine_code = self.__generate_end(
+                machine_code,
+                commands,
+                registers
+            )
         else:
             machine_code = bitcode
 
@@ -207,6 +212,16 @@ class Assembler():
             registers
         )
         zeros_constants[0] = ''.join(branch)
+        return zeros_constants
+
+    def __generate_end(self, zeros_constants, commands, registers):
+        branch = self.__parse_branch(
+            0,
+            ['BEQ', 'R1', 'R2', "-1"],
+            commands['branch'],
+            registers
+        )
+        zeros_constants[-1] = ''.join(branch)
         return zeros_constants
 
     @staticmethod

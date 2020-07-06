@@ -1,4 +1,5 @@
 """python emulator"""
+import datetime
 import os
 
 from PySide2.QtCore import Slot
@@ -88,6 +89,7 @@ class MainWindow(QMainWindow):
         # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
         tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
         tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
+        tb_vhdl = QAction(QIcon(os.path.join(resources_dir, "rom.png")), self.tr("Generate VHDL"), self)
         tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run F9"), self)
         tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")), self.tr("Debug F8"), self)
         tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step F8"), self)
@@ -104,6 +106,7 @@ class MainWindow(QMainWindow):
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_mcode.triggered.connect(self.__mcode)
+        tb_vhdl.triggered.connect(self.__vhdl)
         tb_run.triggered.connect(self.__run)
         tb_debug.triggered.connect(self.__debug)
         tb_stop.triggered.connect(self.__stop)
@@ -116,6 +119,7 @@ class MainWindow(QMainWindow):
         tool_bar.addAction(tb_open)
         tool_bar.addAction(tb_save)
         tool_bar.addAction(tb_mcode)
+        tool_bar.addAction(tb_vhdl)
         tool_bar.addAction(tb_separator)
         tool_bar.addAction(tb_run)
         tool_bar.addAction(tb_debug)
@@ -203,6 +207,59 @@ class MainWindow(QMainWindow):
                                                               'Super32 Machine Code Files (*.m32)')
         if path:
             generator.write(path, machine_code)
+
+    @Slot()
+    def __vhdl(self):
+        path_to_instructionset = os.path.join(os.path.dirname(__file__), '..', 'instructionset.json')
+        cfg = FileIO.read_json(path_to_instructionset)
+
+        input_file = self.editor_widget.get_text()
+        source_file = self.editor_widget.get_file_path()
+
+        preprocessor = Preprocessor()
+        assembler = Assembler(Architectures.SINGLE)
+        generator = Generator('stream')
+
+        code_address, code, zeros_constants, symboltable, _ = preprocessor.parse(
+            input_file=input_file
+        )
+        with ResourceManager(os.path.join(self.resources_dir, 'template.vhdl'), 'r') as file:
+            template = file.read()
+
+        template = template.replace('{{source}}', source_file)
+        template = template.replace('{{date}}', datetime.datetime.now().isoformat())
+
+        spacer = "".join("#" for i in range(len(source_file)))
+        template = template.replace('{{spacer}}', spacer)
+
+        machine_code = assembler.parse(
+            code_address=code_address,
+            code=code,
+            zeros_constants=zeros_constants,
+            commands=cfg['commands'],
+            registers=cfg['registers'],
+            symboltable=symboltable
+        )
+
+        mem = ''
+        mc_length = len(machine_code)
+        for i in range(0, mc_length):
+            mem += '\t\t\t%d => \"%s\"' % (i, machine_code[i])
+            if i < mc_length - 1:
+                mem += ',\n'
+
+        template = template.replace('{{mem_size}}', str(mc_length - 1))
+        template = template.replace('{{memory}}', mem)
+
+        (path, selected_filter) = QFileDialog.getSaveFileName(self,
+                                                              'Save VHDL File',
+                                                              '.',
+                                                              'VHDL Files (*.vhdl)')
+        name = os.path.basename(path).replace(".vhdl", "")
+        template = template.replace('{{name}}', name)
+
+        if path:
+            generator.write(path, template)
 
     @Slot()
     def __quit(self):
