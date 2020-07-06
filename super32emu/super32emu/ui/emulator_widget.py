@@ -86,6 +86,9 @@ class EmulatorWidget(QWidget):
                 self.register_layout.addWidget(r, x, y, Qt.AlignRight)
                 current_register += 1
 
+        self.z_register = RegisterWidget("Z")
+        self.register_layout.addWidget(self.z_register, 9, 2, alignment=Qt.AlignRight)
+
         self.program_counter = RegisterWidget("PC")
         self.register_layout.addWidget(self.program_counter, 9, 3, alignment=Qt.AlignRight)
 
@@ -144,6 +147,11 @@ class EmulatorWidget(QWidget):
 
     def reset_pc_background(self):
         self.program_counter.set_background_color()
+
+    def set_z(self, value, highlight: bool = True):
+        """Sets the value of the program counter"""
+
+        self.z_register.set_value(str(value), highlight=highlight, color="yellow", byte_count=1)
 
     def set_pc(self, value, highlight: bool = True):
         """Sets the value of the program counter"""
