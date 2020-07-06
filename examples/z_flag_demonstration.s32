@@ -1,0 +1,41 @@
+        ORG 4
+num1:   DEFINE 4
+num2:   DEFINE 4
+num3:   DEFINE 8
+num4:   DEFINE 0
+num5:   DEFINE 8
+
+
+        ORG 32
+        START
+        LW R1,num1(R0)
+        LW R2,num2(R0)
+        LW R3,num3(R0)
+        LW R5,num5(R0)
+
+        ' Z-Flag 0 (R1 != R3)
+loop:   ADD R4,R1,R3        
+
+        ' Z-Flag 1 (R1 = R2)
+        ADD R4,R1,R2
+
+        ' Z-Flag 0 (num4 != R0)
+        LW R4,num4(R0)
+
+        ' Z-Flag 1 (8 = R5)
+        LW R4,8(R5)
+
+        ' Z-Flag 0 (num4 != R0)
+        SW R4,num4(R0)
+
+        ' Z-Flag 1 (8 = R5)
+        SW R4,8(R5)
+
+        ' Z-Flag 0 (R1 != R2)
+        BEQ R1,R3,loop
+        
+        ' Z-Flag 1 (R1 = R2)
+        BEQ R1,R2,stop
+        
+stop:   END
+        
