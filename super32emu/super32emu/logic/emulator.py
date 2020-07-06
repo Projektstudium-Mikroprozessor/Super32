@@ -19,6 +19,7 @@ class Emulator:
 
         self.emulator_widget.reset_all_registers()
 
+        self.emulator_widget.set_z(0, False)
         self.emulator_widget.set_pc(0, False)
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
@@ -54,6 +55,7 @@ class Emulator:
 
         self.emulator_widget.reset_highlighted_memory_lines()
         self.emulator_widget.reset_all_register_backgrounds()
+        self.emulator_widget.set_z(0, False)
 
         instructionset = self.memory[self.row_counter]
         self.__parse_instructionset(instructionset)
@@ -73,6 +75,7 @@ class Emulator:
 
     def end_emulation(self):
         # Reset GUI
+        self.emulator_widget.set_z(0, False)
         self.emulator_widget.set_pc(0, False)
         self.emulator_widget.reset_pc_background()
         self.emulator_widget.set_storage(''.ljust(2 ** 10, '0'))
@@ -167,6 +170,8 @@ class Emulator:
             # TODO Define exception for unknown instruction
             raise Exception
 
+        self.__set_z_register(r1_value, r2_value)
+
         register = self.__get_register_index(target)
         result_hex = hex(result)[2:].upper()
         self.emulator_widget.set_register(register, result_hex)
@@ -176,7 +181,12 @@ class Emulator:
                       f"Saving result to {self.__get_register_index(target)}.")
 
     def __branch(self, r2: str, r1: str, offset: str):
-        if not self.__get_register_value(r2) == self.__get_register_value(r1):
+        r1_value = self.__get_register_value(r1)
+        r2_value = self.__get_register_value(r2)
+
+        self.__set_z_register(r1_value, r2_value)
+
+        if not r1_value == r2_value:
             logging.debug(f"Branch: Did not branch. Register contents of {self.__get_register_index(r1)}"
                           f" and {self.__get_register_index(r2)} not equal")
             return
@@ -193,6 +203,8 @@ class Emulator:
         offset_num = BitArray(bin=offset).int
         r2_value = self.__get_register_value(r2)
 
+        self.__set_z_register(r2_value, offset_num)
+
         # Absolute addressing
         address = (offset_num + r2_value) // 4
 
@@ -207,6 +219,8 @@ class Emulator:
     def __save(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int
         r2_value = self.__get_register_value(r2)
+
+        self.__set_z_register(r2_value, offset_num)
 
         # Absolute addressing
         address = (offset_num + r2_value) // 4
@@ -249,3 +263,9 @@ class Emulator:
 
         if not current_editor_line is None:
             self.editor_widget.highlight_line(current_editor_line)
+
+    def __set_z_register(self, value_1: int, value_2: int):
+        if value_1 == value_2:
+            self.emulator_widget.set_z(1)
+        else:
+            self.emulator_widget.set_z(0)

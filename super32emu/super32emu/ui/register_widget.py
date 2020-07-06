@@ -39,13 +39,15 @@ class RegisterWidget(QWidget):
     def set_background_color(self, color: str = "white"):
         self.text_input.setStyleSheet("background-color: " + color)
 
-    def set_value(self, value: str, highlight: bool = True, color: str = "#00ff00"):
+    def set_value(self, value: str, highlight: bool = True, color: str = "#00ff00", byte_count: int = 8):
         """Set the value of the register"""
-        value = value.rjust(8, '0')
+        value = value.rjust(byte_count, '0')
         self.text_input.setText(value)
 
         if highlight:
             self.set_background_color(color)
+        else:
+            self.set_background_color("white")
 
     def get_value(self):
         return self.text_input.text()
