@@ -141,6 +141,11 @@ class Emulator:
                 instructionset[6:11],
                 instructionset[11:16],
                 instructionset[16:32])
+        elif instruction == self.commands['storage']['LI']:
+            self.__load_immediate(
+                instructionset[6:11],
+                instructionset[11:16],
+                instructionset[16:32])
         elif instruction == self.commands['storage']['LW']:
             self.__load(
                 instructionset[6:11],
@@ -165,7 +170,15 @@ class Emulator:
         elif func == self.commands['arithmetic']['OR']:
             result = r1_value | r2_value
         elif func == self.commands['arithmetic']['NOR']:
-            result = r1_value | r2_value ^ 0b11111111
+            result = r1_value | r2_value ^ 0xffffffff
+        elif func == self.commands['arithmetic']['NAND']:
+            result = r1_value & r2_value ^ 0xffffffff
+        elif func == self.commands['arithmetic']['SHL']:
+            result = r1_value << r2_value
+        elif func == self.commands['arithmetic']['SLR']:
+            result = r1_value >> r2_value
+        elif func == self.commands['arithmetic']['SAR']:
+            result = (r1_value >> r2_value) + (r1_value >> 31) * (0xffffffff >> (32 - r2_value) << (32 - r2_value))
         else:
             # TODO Define exception for unknown instruction
             raise Exception
@@ -198,6 +211,19 @@ class Emulator:
         self.row_counter = self.row_counter + offset_num
 
         logging.debug(f"Branch: Continuing program execution at address {(self.row_counter + 1) * 4}")
+
+    def __load_immediate(self, r2: str, r1: str, immediate: str):
+        imm_num = BitArray(bin=immediate).int
+        r2_value = self.__get_register_value(r2)
+
+        self.__set_z_register(r2_value, imm_num)
+
+        value = r2_value + imm_num
+
+        r1_num = BitArray(bin=r1).uint
+        self.emulator_widget.set_register(r1_num, value)
+
+        logging.debug(f"Load: Loading value {value} into register {r1_num}")
 
     def __load(self, r2: str, r1: str, offset: str):
         offset_num = BitArray(bin=offset).int

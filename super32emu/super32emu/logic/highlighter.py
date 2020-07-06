@@ -23,7 +23,7 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         instruction_format = QTextCharFormat()
         instruction_format.setForeground(Qt.darkBlue)
         UiStyle.set_font_weight(instruction_format)
-        instruction_pattern = QRegExp("\\b(SUB|ADD|AND|OR|NOR|BEQ|LW|SW)\\b")
+        instruction_pattern = QRegExp("\\b(SUB|ADD|AND|OR|NOR|NAND|SHL|SLR|SAR|BEQ|LI|LW|SW)\\b")
         self.highlighting_rules.append(
             (instruction_pattern, instruction_format))
 

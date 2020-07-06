@@ -9,7 +9,7 @@ from .ui_style import UiStyle
 class RegisterWidget(QWidget):
     """Register widget"""
 
-    def __init__(self, text):
+    def __init__(self, text, fixed_value=None, mask="HHHHHHHH"):
         QWidget.__init__(self)
 
         self.label = QLabel()
@@ -18,12 +18,16 @@ class RegisterWidget(QWidget):
             self.label.setText(text)
 
         self.text_input = QLineEdit()
-        self.text_input.setInputMask("HHHHHHHH")
+        self.text_input.setInputMask(mask)
         self.text_input.setFont(UiStyle.get_font())
         self.text_input.setAlignment(Qt.AlignRight)
         text_width = QFontMetrics(self.text_input.font()).maxWidth() * 10
         self.text_input.setFixedWidth(text_width)
 
+        self.__fixed = fixed_value
+        if fixed_value is not None:
+            self.text_input.setReadOnly(True)
+        
         layout = QHBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.text_input)
@@ -41,6 +45,9 @@ class RegisterWidget(QWidget):
 
     def set_value(self, value: str, highlight: bool = True, color: str = "#00ff00", byte_count: int = 8):
         """Set the value of the register"""
+        if self.__fixed is not None:
+            value = str(self.__fixed)
+
         value = value.rjust(byte_count, '0')
         self.text_input.setText(value)
 
