@@ -13,7 +13,6 @@ from super32utils.inout.fileio import ResourceManager
 
 from .editor_widget import EditorWidget
 from .emulator_widget import EmulatorDockWidget
-from .footer_widget import FooterDockWidget
 from ..logic.emulator import Emulator
 
 
@@ -35,16 +34,13 @@ class MainWindow(QMainWindow):
 
         self.editor_widget = EditorWidget()
         self.emulator_dock_widget = EmulatorDockWidget()
-        self.footer_dock_widget = FooterDockWidget()
 
         self.setCentralWidget(self.editor_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, self.emulator_dock_widget)
-        self.addDockWidget(Qt.BottomDockWidgetArea, self.footer_dock_widget)
 
         self.emulator = Emulator(
             self.editor_widget,
-            self.emulator_dock_widget.emulator,
-            self.footer_dock_widget.footer
+            self.emulator_dock_widget.emulator
         )
 
     def __create_menu(self):

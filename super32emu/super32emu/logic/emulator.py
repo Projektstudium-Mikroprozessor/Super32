@@ -13,10 +13,9 @@ from super32utils.inout.fileio import FileIO
 class Emulator:
     """This is the logic to emulate the assembly instructions"""
 
-    def __init__(self, editor_widget, emulator_widget, footer_widget):
+    def __init__(self, editor_widget, emulator_widget):
         self.editor_widget = editor_widget
         self.emulator_widget = emulator_widget
-        self.footer_widget = footer_widget
 
         self.emulator_widget.reset_all_registers()
 
