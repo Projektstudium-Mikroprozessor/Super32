@@ -39,7 +39,7 @@ class Emulator:
         if self.emulation_running is False:
             self.run()
 
-        while self.row_counter < len(self.memory):
+        while self.row_counter < len(self.memory) - 1:
             if self.editor_widget.is_breakpoint_set(self.__get_current_editor_line()) and not self.__flag_breakpoint:
                 self.__flag_breakpoint = True
                 break
@@ -48,7 +48,7 @@ class Emulator:
             self.emulate_step()
 
     def emulate_step(self):
-        if self.row_counter >= len(self.memory):
+        if self.row_counter >= len(self.memory) - 1:
             return
 
         logging.debug(f"Executing code address {self.row_counter * 4}")

@@ -87,11 +87,11 @@ class Preprocessor:
             if tokens[0] == AssemblerDirectives.ORG.name:
                 max_address = int(tokens[1])
                 org_found = True
-            elif not tokens[0] == AssemblerDirectives.START.name and not tokens[0] == AssemblerDirectives.END.name:
+            elif not tokens[0] == AssemblerDirectives.START.name:
                 max_address = max_address + REG_SIZE
 
         if not org_found:
-            raise Exception('Code have to start with ORG-directive')
+            raise Exception('Code has to start with ORG-directive')
 
         return [ZEROS for address in range(
             0,
