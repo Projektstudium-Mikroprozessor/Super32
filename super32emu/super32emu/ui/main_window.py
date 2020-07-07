@@ -219,6 +219,9 @@ class MainWindow(QMainWindow):
         input_file = self.editor_widget.get_text()
         source_file = self.editor_widget.get_file_path()
 
+        if source_file is None:
+            source_file = "unsaved source"
+
         preprocessor = Preprocessor()
         assembler = Assembler(Architectures.SINGLE)
         generator = Generator('stream')
