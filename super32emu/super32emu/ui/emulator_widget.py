@@ -88,7 +88,7 @@ class EmulatorWidget(QWidget):
                 self.register_layout.addWidget(r, x, y, Qt.AlignRight)
                 current_register += 1
 
-        self.z_register = RegisterWidget("Z", mask="H")
+        self.z_register = RegisterWidget("Z", mask="B")
         self.register_layout.addWidget(self.z_register, 9, 2, alignment=Qt.AlignRight)
 
         self.program_counter = RegisterWidget("PC")

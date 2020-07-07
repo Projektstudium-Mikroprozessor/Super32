@@ -170,15 +170,15 @@ class Emulator:
         elif func == self.commands['arithmetic']['OR']:
             result = r1_value | r2_value
         elif func == self.commands['arithmetic']['NOR']:
-            result = r1_value | r2_value ^ 0xffffffff
+            result = (r1_value | r2_value) ^ 0xffffffff
         elif func == self.commands['arithmetic']['NAND']:
-            result = r1_value & r2_value ^ 0xffffffff
+            result = (r1_value & r2_value) ^ 0xffffffff
         elif func == self.commands['arithmetic']['SHL']:
             result = r1_value << r2_value
         elif func == self.commands['arithmetic']['SLR']:
             result = r1_value >> r2_value
         elif func == self.commands['arithmetic']['SAR']:
-            result = (r1_value >> r2_value) + (r1_value >> 31) * (0xffffffff >> (32 - r2_value) << (32 - r2_value))
+            result = (r1_value >> r2_value) | (r1_value >> 31) * (0xffffffff >> (32 - r2_value) << (32 - r2_value))
         else:
             # TODO Define exception for unknown instruction
             raise Exception
