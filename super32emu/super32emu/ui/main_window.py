@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
     def __create_toolbar(self):
         resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
 
+        tb_new = QAction(QIcon(os.path.join(resources_dir, "file.png")), self.tr("New"), self)
         tb_open = QAction(QIcon(os.path.join(resources_dir, "open.png")), self.tr("Open"), self)
         # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
         tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
@@ -101,6 +102,7 @@ class MainWindow(QMainWindow):
         tb_separator = QAction("", self)
         tb_separator.setSeparator(True)
 
+        tb_new.triggered.connect(self.__new)
         tb_open.triggered.connect(self.__open)
         tb_save.triggered.connect(self.__save)
         tb_mcode.triggered.connect(self.__mcode)
@@ -113,6 +115,7 @@ class MainWindow(QMainWindow):
         tb_stop.setEnabled(False)
 
         tool_bar = self.addToolBar("Toolbar")
+        tool_bar.addAction(tb_new)
         tool_bar.addAction(tb_open)
         tool_bar.addAction(tb_save)
         tool_bar.addAction(tb_mcode)

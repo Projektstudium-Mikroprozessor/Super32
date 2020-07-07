@@ -74,9 +74,11 @@ class EmulatorWidget(QWidget):
         self.register = []
         self.register_layout = QGridLayout()
 
-        for i in range(32):
+        for i in range(30):
             r = RegisterWidget('R' + str(i))
             self.register.append(r)
+        self.register.append(RegisterWidget('R30', 0))
+        self.register.append(RegisterWidget('R31', 1))
 
         current_register = 0
 
@@ -86,7 +88,7 @@ class EmulatorWidget(QWidget):
                 self.register_layout.addWidget(r, x, y, Qt.AlignRight)
                 current_register += 1
 
-        self.z_register = RegisterWidget("Z")
+        self.z_register = RegisterWidget("Z", mask="B")
         self.register_layout.addWidget(self.z_register, 9, 2, alignment=Qt.AlignRight)
 
         self.program_counter = RegisterWidget("PC")

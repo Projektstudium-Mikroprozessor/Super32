@@ -3,6 +3,7 @@ Assembler Module
 """
 
 import logging
+import re
 from bitstring import Bits
 
 REG_SIZE = 4  # bytes
@@ -24,10 +25,7 @@ class Assembler():
 
         for line_nr, line in enumerate(code):
             logging.debug(str(line))
-            for delimiter in self.__delimiters:
-                line = line.replace(delimiter, ' ')
-            line = line.strip()
-            tokens = line.split(' ')
+            tokens = re.split("\\s*[\\s" + re.escape("".join(self.__delimiters)) + "]\\s*", line + " ")[:-1]
             current_address = code_address + line_nr * REG_SIZE
             if len(tokens[0]) == 0:
                 continue
