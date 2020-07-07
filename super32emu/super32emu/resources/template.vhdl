@@ -22,8 +22,8 @@ ARCHITECTURE behavioural OF rom_{{name}} IS
 BEGIN
 	PROCESS (addr)
 
-		TYPE memory_bank IS ARRAY(0 TO {{mem_size}}) OF word; 		-- memory bank, max length 2**30 (4 * 1GB)
-		VARIABLE values	: memory_bank := (			        -- memory values
+		TYPE memory_bank IS ARRAY(0 TO {{mem_size}}) OF word;	-- memory bank, max length 2**30 (4 * 1GB)
+		VARIABLE values	: memory_bank := (			-- memory values
 {{memory}}
 		);
 
@@ -58,7 +58,7 @@ BEGIN
 	PROCESS (clock, addr)
 
 		TYPE memory_bank IS ARRAY(0 TO 2**20-1) OF word;	-- memory bank, max length 2**30 (4 * 1GB)
-		VARIABLE values	: memory_bank := (			        -- memory values
+		VARIABLE values	: memory_bank := (			-- memory values
 {{memory}},
 			OTHERS => (OTHERS => '0')
 		);
