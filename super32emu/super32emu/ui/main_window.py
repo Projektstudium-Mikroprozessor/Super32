@@ -1,6 +1,7 @@
 """python emulator"""
 import datetime
 import os
+from os.path import dirname, join, normpath
 
 from PySide2.QtCore import Slot
 from PySide2.QtGui import QIcon, Qt, QKeySequence
@@ -25,7 +26,9 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Super32 Emulator")
 
-        self.resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
+        self.resources_dir = normpath(join(dirname(__file__), '..', 'resources'))
+        self.path_to_instructionset = normpath(join(self.resources_dir, 'instructionset.json'))
+
         self.setWindowIcon(QIcon(os.path.join(self.resources_dir, "logo_color.png")))
 
         self.start_path = '.'
@@ -83,18 +86,16 @@ class MainWindow(QMainWindow):
         quit_action.triggered.connect(self.__quit)
 
     def __create_toolbar(self):
-        resources_dir = os.path.join(os.path.dirname(__file__), '..', 'resources')
-
-        tb_new = QAction(QIcon(os.path.join(resources_dir, "file.png")), self.tr("New"), self)
-        tb_open = QAction(QIcon(os.path.join(resources_dir, "open.png")), self.tr("Open"), self)
+        tb_new = QAction(QIcon(os.path.join(self.resources_dir, "file.png")), self.tr("New"), self)
+        tb_open = QAction(QIcon(os.path.join(self.resources_dir, "open.png")), self.tr("Open"), self)
         # TODO tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
-        tb_save = QAction(QIcon(os.path.join(resources_dir, "save.png")), self.tr("Save"), self)
-        tb_mcode = QAction(QIcon(os.path.join(resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
-        tb_vhdl = QAction(QIcon(os.path.join(resources_dir, "rom.png")), self.tr("Generate VHDL"), self)
-        tb_run = QAction(QIcon(os.path.join(resources_dir, "run.png")), self.tr("Run F9"), self)
-        tb_debug = QAction(QIcon(os.path.join(resources_dir, "debug.png")), self.tr("Debug F8"), self)
-        tb_step = QAction(QIcon(os.path.join(resources_dir, "step.png")), self.tr("Step F8"), self)
-        tb_stop = QAction(QIcon(os.path.join(resources_dir, "stop.png")), self.tr("Stop F10"), self)
+        tb_save = QAction(QIcon(os.path.join(self.resources_dir, "save.png")), self.tr("Save"), self)
+        tb_mcode = QAction(QIcon(os.path.join(self.resources_dir, "mcode.png")), self.tr("Generate Machine Code"), self)
+        tb_vhdl = QAction(QIcon(os.path.join(self.resources_dir, "rom.png")), self.tr("Generate VHDL"), self)
+        tb_run = QAction(QIcon(os.path.join(self.resources_dir, "run.png")), self.tr("Run F9"), self)
+        tb_debug = QAction(QIcon(os.path.join(self.resources_dir, "debug.png")), self.tr("Debug F8"), self)
+        tb_step = QAction(QIcon(os.path.join(self.resources_dir, "step.png")), self.tr("Step F8"), self)
+        tb_stop = QAction(QIcon(os.path.join(self.resources_dir, "stop.png")), self.tr("Stop F10"), self)
 
         tb_run.setShortcut(QKeySequence(Qt.Key_F9))
         tb_debug.setShortcut(QKeySequence(Qt.Key_F8))
@@ -182,8 +183,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def __mcode(self):
-        path_to_instructionset = os.path.join(os.path.dirname(__file__), '..', 'instructionset.json')
-        cfg = FileIO.read_json(path_to_instructionset)
+        cfg = FileIO.read_json(self.path_to_instructionset)
 
         input_file = self.editor_widget.get_text()
 
@@ -213,8 +213,7 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def __vhdl(self):
-        path_to_instructionset = os.path.join(os.path.dirname(__file__), '..', 'instructionset.json')
-        cfg = FileIO.read_json(path_to_instructionset)
+        cfg = FileIO.read_json(self.path_to_instructionset)
 
         input_file = self.editor_widget.get_text()
         source_file = self.editor_widget.get_file_path()
