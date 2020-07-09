@@ -11,11 +11,10 @@ def pip_install():
 def pyinstaller():
     _ = os.pathsep
     subprocess.run([
-        sys.executable, "-m", "PyInstaller", "-n", "super32emu", "--windowed",
+        sys.executable, "-m", "PyInstaller", "-n", "super32emu-app", "--windowed",
         "-i", "./super32emu/super32emu/resources/logo_color.ico",
-        "--add-data", f"./super32emu/super32emu/instructionset.json{_}super32emu",
         "--add-data", f"./super32emu/super32emu/resources{_}super32emu/resources",
-        "--add-data", f"./examples{_}super32emu/examples",
+        "--add-data", f"./examples{_}examples",
         "./super32emu/runner.py"
         ])
 
