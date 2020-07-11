@@ -1,6 +1,7 @@
 """Emulator-Logic"""
 import logging
 import os
+from os.path import dirname, join, normpath
 
 from PySide2.QtCore import Qt
 from bitstring import BitArray
@@ -24,7 +25,7 @@ class Emulator:
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
 
-        path_to_instructionset = os.path.join(os.path.dirname(__file__), '..', 'instructionset.json')
+        path_to_instructionset = normpath(join(dirname(__file__), '..', 'resources', 'instructionset.json'))
         self.cfg = FileIO.read_json(path_to_instructionset)
         self.commands = self.cfg['commands']
         self.memory = []
