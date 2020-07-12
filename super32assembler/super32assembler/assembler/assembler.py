@@ -3,6 +3,7 @@ Assembler Module
 """
 
 import logging
+import re
 from bitstring import Bits
 
 REG_SIZE = 4  # bytes
@@ -24,10 +25,7 @@ class Assembler():
 
         for line_nr, line in enumerate(code):
             logging.debug(str(line))
-            for delimiter in self.__delimiters:
-                line = line.replace(delimiter, ' ')
-            line = line.strip()
-            tokens = line.split(' ')
+            tokens = re.split("\\s*[\\s" + re.escape("".join(self.__delimiters)) + "]\\s*", line + " ")[:-1]
             current_address = code_address + line_nr * REG_SIZE
             if len(tokens[0]) == 0:
                 continue
@@ -66,6 +64,11 @@ class Assembler():
                 code_address,
                 bitcode,
                 zeros_constants
+            )
+            machine_code = self.__generate_end(
+                machine_code,
+                commands,
+                registers
             )
         else:
             machine_code = bitcode
@@ -142,17 +145,12 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[2]
-        if self.__is_int(label_or_number):  # offset
+        if self.__is_int(label_or_number):
             offset = int(label_or_number)
             tokens[2] = Bits(int=offset, length=16).bin
         else:  # label
             address = self.__validate_label(label_or_number)
-            offset = address - current_address
-            if offset < 0:
-                offset -= REG_SIZE  # adjustment due to pc + 4
-                # adjustment due to offset << 2
-                offset = int(offset / REG_SIZE)
-            tokens[2] = Bits(int=offset, length=16).bin
+            tokens[2] = Bits(int=address, length=16).bin
 
         self.__validate_bits(''.join(tokens))
 
@@ -181,16 +179,14 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[-1]
-        if self.__is_int(label_or_number):  # absolut address
+        if self.__is_int(label_or_number):  # absolute address
             address = int(label_or_number)
             tokens[-1] = Bits(int=address, length=16).bin
         else:  # label
             address = self.__validate_label(label_or_number)
             offset = address - current_address
-            if offset < 0:
-                offset -= REG_SIZE  # adjustment due to pc + 4
-                # adjustment due to offset << 2
-                offset = int(offset / REG_SIZE)
+            offset -= REG_SIZE
+            offset = int(offset / REG_SIZE)
             tokens[-1] = Bits(int=offset, length=16).bin
 
         self.__validate_bits(''.join(tokens))
@@ -214,6 +210,16 @@ class Assembler():
             registers
         )
         zeros_constants[0] = ''.join(branch)
+        return zeros_constants
+
+    def __generate_end(self, zeros_constants, commands, registers):
+        branch = self.__parse_branch(
+            0,
+            ['BEQ', 'R1', 'R2', "-1"],
+            commands['branch'],
+            registers
+        )
+        zeros_constants[-1] = ''.join(branch)
         return zeros_constants
 
     @staticmethod

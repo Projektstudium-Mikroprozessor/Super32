@@ -74,9 +74,11 @@ class EmulatorWidget(QWidget):
         self.register = []
         self.register_layout = QGridLayout()
 
-        for i in range(32):
+        for i in range(30):
             r = RegisterWidget('R' + str(i))
             self.register.append(r)
+        self.register.append(RegisterWidget('R30', 0))
+        self.register.append(RegisterWidget('R31', 1))
 
         current_register = 0
 
@@ -86,6 +88,9 @@ class EmulatorWidget(QWidget):
                 self.register_layout.addWidget(r, x, y, Qt.AlignRight)
                 current_register += 1
 
+        self.z_register = RegisterWidget("Z", mask="B")
+        self.register_layout.addWidget(self.z_register, 9, 2, alignment=Qt.AlignRight)
+
         self.program_counter = RegisterWidget("PC")
         self.register_layout.addWidget(self.program_counter, 9, 3, alignment=Qt.AlignRight)
 
@@ -93,7 +98,7 @@ class EmulatorWidget(QWidget):
 
     def __create_storage_group(self):
         self.storage = MemoryWidget()
-        self.storage.setFont(QFont('Fira Code', 8, QFont.Medium))
+        self.storage.setFont(UiStyle.get_font())
 
         storage_layout = QVBoxLayout()
 
@@ -120,17 +125,40 @@ class EmulatorWidget(QWidget):
 
         return self.register[index].get_value()
 
-    def set_register(self, index, value):
+    def set_register_background(self, index, color = "white"):
+        """Resets the register background color"""
+        if index < 0 or index > 32:
+            raise Exception('Register out of index')
+
+        self.register[index].set_background_color(color)
+
+    def set_register(self, index, value, highlight: bool = True):
         """Sets the value of a register chosen by its index"""
         if index < 0 or index > 32:
             raise Exception('Register out of index')
 
-        self.register[index].set_value(str(value))
+        self.register[index].set_value(str(value), highlight)
 
-    def set_pc(self, value):
+    def reset_all_register_backgrounds(self):
+        for rindex in range(32):
+            self.set_register_background(rindex)
+
+    def reset_all_registers(self):
+        for rindex in range(32):
+            self.set_register(rindex, '00000000', False)
+
+    def reset_pc_background(self):
+        self.program_counter.set_background_color()
+
+    def set_z(self, value, highlight: bool = True):
         """Sets the value of the program counter"""
 
-        self.program_counter.set_value(str(value))
+        self.z_register.set_value(str(value), highlight=highlight, color="yellow", byte_count=1)
+
+    def set_pc(self, value, highlight: bool = True):
+        """Sets the value of the program counter"""
+
+        self.program_counter.set_value(str(value), highlight=highlight, color="yellow")
 
     def set_storage(self, value):
         """Sets the value of the storage"""
@@ -139,10 +167,12 @@ class EmulatorWidget(QWidget):
     def set_symbols(self, symboltable: dict):
         """Fills the symboltable with parsed labels and addresses"""
 
-        for index in range(1, self.symbol_layout.rowCount()):
-            self.symbol_layout.removeRow(index)
+        num_rows = self.symbol_layout.rowCount()
+        for _ in range(1, num_rows):
+            self.symbol_layout.removeRow(1)
 
-        font = QFont('Fira Code', 8, QFont.Medium)
+        font = UiStyle.get_font()
+
         for entry in symboltable:
             symbol = QLineEdit()
             symbol.setReadOnly(True)
@@ -153,6 +183,12 @@ class EmulatorWidget(QWidget):
             address.setFont(font)
             address.setText(str(symboltable[entry]))
             self.symbol_layout.addRow(address, symbol)
+
+    def highlight_memory_line(self, line_number: int, color=Qt.yellow):
+        self.storage.highlightLine(line_number, color)
+
+    def reset_highlighted_memory_lines(self):
+        self.storage.resetHighlightedLines()
 
     def __beautify_storage(self, value: str) -> str:
         """Makes the memory string more readable.

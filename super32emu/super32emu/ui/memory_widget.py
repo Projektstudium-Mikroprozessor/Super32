@@ -1,7 +1,11 @@
 from .code_editor import *
-from PySide2.QtGui import QFont
+from PySide2.QtGui import QFont, QTextOption
+from PySide2.QtGui import QTextCursor
 
-class MemoryWidget(CodeEditor):
+from .ui_style import UiStyle
+
+
+class MemoryWidget(LineNumberEditor):
     """
     Like CodeEditor, but...
 
@@ -14,6 +18,7 @@ class MemoryWidget(CodeEditor):
     def __init__(self):
         super().__init__()
         self.setReadOnly(True)
+        self.setWordWrapMode(QTextOption.NoWrap)
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
@@ -33,7 +38,7 @@ class MemoryWidget(CodeEditor):
             if block.isVisible() and (bottom >= event.rect().top()):
                 number = hex(blockNumber)[2:].upper()
                 painter.setPen(Qt.black)
-                painter.setFont(QFont('Fira Code', 8, QFont.Medium))
+                painter.setFont(UiStyle.get_font())
                 painter.drawText(0, top, self.lineNumberArea.width(), height,
                                  Qt.AlignRight, number)
 

@@ -24,9 +24,14 @@ After you successfully cloned the repository, switch to the latest [release](htt
 
 ```Bash
 git checkout X.Y.Z
-pip install ./super32utils
-pip install ./super32assembler
-pip install ./super32emu
+pip install ./super32utils ./super32assembler ./super32emu
+```
+
+Alternatively, use the provided `packages.py` script:
+
+```bash
+git checkout X.Y.Z
+python packages.py -i
 ```
 
 ### Write assembler code
@@ -67,6 +72,8 @@ See the `examples/` directory
 
 ### Usage
 
+### Assembler
+
 Provide the path to an assembler code file as command line argument:
 
 ```Bash
@@ -83,6 +90,16 @@ Option | Default | Description
 -g/--generator | lines | Specify output format. use ```lines``` to generate 32bit machine-code each line. Use ```stream``` to generate one single line machine-code.
 -a/--architecture | single | Specify processor architecture. use ```single``` to select single-memory architecture. Use ```multi``` to select dual-memory architecture.
 
+### Emulator
+
+Start it with:
+
+```Bash
+super32emu
+```
+
+![Super32Emu](./emulator.gif)
+
 ## Development
 
 ### Setup
@@ -94,11 +111,10 @@ pip install -r requirements.txt
 pip install -r requirements/development.txt
 ```
 
-Install our packages as well (Super32emu has dependencies on assembler and utils):
+Install our packages as well (Super32 Emulator has dependencies on assembler and utils):
 
 ```Bash
-pip install ./super32utils
-pip install ./super32assembler
+pip install ./super32utils ./super32assembler
 ```
 
 ### Running our modules
@@ -122,6 +138,14 @@ To run these test use:
 pytest test_{test_name}.py
 ```
 
+### Building a standalone executable with PyInstaller
+
+Run this command on the operating system for which you would like to create a standalone executable for:
+
+```bash
+python packages.py -s
+```
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning.
@@ -133,6 +157,8 @@ For the versions available, see the [releases on this repository](https://github
 - *Marius Schenzle* - [xsjad0](https://github.com/xsjad0)
 - *Thomas Schöller* - [MaxAtoms](https://github.com/MaxAtoms)
 - *Noah Ströhle* - [DrNochi](https://github.com/DrNochi)
+- *Jan Dieterich* - [SirFussel](https://github.com/SirFussel)
+- *Simon Luib* - [Ferocio](https://github.com/Ferocio)
 
 ## License
 
