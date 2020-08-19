@@ -20,8 +20,8 @@ class Emulator:
 
         self.emulator_widget.reset_all_registers()
 
-        self.emulator_widget.set_z(0, False)
-        self.emulator_widget.set_pc(0, False)
+        self.emulator_widget.set_z(0)
+        self.emulator_widget.set_pc(0)
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
 
@@ -56,7 +56,7 @@ class Emulator:
 
         self.emulator_widget.reset_highlighted_memory_lines()
         self.emulator_widget.reset_all_register_backgrounds()
-        self.emulator_widget.set_z(0, False)
+        self.emulator_widget.set_z(0)
 
         instructionset = self.memory[self.row_counter]
         self.__parse_instructionset(instructionset)
@@ -76,8 +76,8 @@ class Emulator:
 
     def end_emulation(self):
         # Reset GUI
-        self.emulator_widget.set_z(0, False)
-        self.emulator_widget.set_pc(0, False)
+        self.emulator_widget.set_z(0)
+        self.emulator_widget.set_pc(0)
         self.emulator_widget.reset_pc_background()
         self.emulator_widget.set_storage(''.ljust(2 ** 10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
