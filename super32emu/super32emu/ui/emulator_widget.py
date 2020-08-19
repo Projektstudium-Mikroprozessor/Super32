@@ -182,7 +182,7 @@ class EmulatorWidget(QWidget):
             value.setReadOnly(True)
             value.setFont(font)
             value.setText(str(symboltable[entry]))
-            self.symbol_layout.addRow(value, symbol)
+            self.symbol_layout.addRow(symbol, value)
 
     def highlight_memory_line(self, line_number: int, color=Qt.yellow):
         self.storage.highlightLine(line_number, color)
