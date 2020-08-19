@@ -71,7 +71,7 @@ class Emulator:
         self.__highlight_editor_line()
 
         if self.changed_memory_address is not None:
-            self.emulator_widget.highlight_memory_line(self.changed_memory_address, Qt.green)
+            self.emulator_widget.highlight_memory_line(self.changed_memory_address, Qt.lightGray)
             self.changed_memory_address = None
 
     def end_emulation(self):
