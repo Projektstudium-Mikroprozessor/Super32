@@ -205,7 +205,7 @@ class Assembler():
         branch_address = int(start_address / REG_SIZE - 1)
         branch = self.__parse_branch(
             0,
-            ['BEQ', 'R1', 'R2', "{ADDRESS}".format(ADDRESS=branch_address)],
+            ['BEQ', 'R30', 'R30', "{ADDRESS}".format(ADDRESS=branch_address)],
             commands['branch'],
             registers
         )
@@ -215,7 +215,7 @@ class Assembler():
     def __generate_end(self, zeros_constants, commands, registers):
         branch = self.__parse_branch(
             0,
-            ['BEQ', 'R1', 'R2', "-1"],
+            ['BEQ', 'R30', 'R30', "-1"],
             commands['branch'],
             registers
         )
