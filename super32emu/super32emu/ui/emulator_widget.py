@@ -150,15 +150,15 @@ class EmulatorWidget(QWidget):
     def reset_pc_background(self):
         self.program_counter.set_background_color()
 
-    def set_z(self, value, highlight: bool = True):
+    def set_z(self, value):
         """Sets the value of the program counter"""
 
-        self.z_register.set_value(str(value), highlight=highlight, color="yellow", byte_count=1)
+        self.z_register.set_value(str(value), highlight=False, color="yellow", byte_count=1)
 
-    def set_pc(self, value, highlight: bool = True):
+    def set_pc(self, value):
         """Sets the value of the program counter"""
 
-        self.program_counter.set_value(str(value), highlight=highlight, color="yellow")
+        self.program_counter.set_value(str(value), highlight=False, color="yellow")
 
     def set_storage(self, value):
         """Sets the value of the storage"""
