@@ -17,9 +17,24 @@ class MemoryWidget(LineNumberEditor):
 
     def __init__(self):
         super().__init__()
+
+        # Used to remember the position to which the user scrolled
+        self.scrollBarValue = 0
+
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
 
+        self.connect(self.verticalScrollBar(), SIGNAL('sliderMoved(int)'), self.storeScrollBarValue)
+
+    def storeScrollBarValue(self, value: int):
+        self.scrollBarValue = value
+
+    def setPlainText(self, text: str):
+        super(MemoryWidget, self).setPlainText(text)
+
+        # Restore vertical scroll position
+        self.verticalScrollBar().setValue(self.scrollBarValue)
+        
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
 
