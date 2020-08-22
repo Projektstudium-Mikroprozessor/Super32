@@ -73,7 +73,7 @@ class Preprocessor:
                 asm_directive = tokens[0]
                 if asm_directive in AssemblerDirectives.to_string():
                     if asm_directive == AssemblerDirectives.ORG.name:
-                        address = int(tokens[1])
+                        address = self.__hex_to_decimal(tokens[1])
                 else:
                     address += REG_SIZE
 
@@ -82,12 +82,16 @@ class Preprocessor:
     def __generate_zeros(self, input_file):
         org_found = False
         max_address = 0
-        for line in input_file:  # seach for maximum address
+
+        # Calculate max address
+        for line in input_file:
             tokens = line.split(' ')
             if tokens[0] == AssemblerDirectives.ORG.name:
-                max_address = int(tokens[1])
+                # Move the current address according to the ORG directive
+                max_address = self.__hex_to_decimal(tokens[1])
                 org_found = True
             elif not tokens[0] == AssemblerDirectives.START.name:
+                # Allocate 4 bytes for each command (except START directive)
                 max_address = max_address + REG_SIZE
 
         if not org_found:
@@ -110,10 +114,10 @@ class Preprocessor:
             asm_directive = tokens[0]
             if tokens[0] in AssemblerDirectives.to_string():
                 if asm_directive == AssemblerDirectives.ORG.name:
-                    address = int(tokens[1])
+                    address = self.__hex_to_decimal(tokens[1])
                     org = True
                 elif asm_directive == AssemblerDirectives.DEFINE.name:
-                    constant = int(tokens[1])
+                    constant = self.__hex_to_decimal(tokens[1])
                     constant_bin = Bits(int=constant, length=32).bin
                     index = int(address / REG_SIZE)
                     zeros_constants[index] = constant_bin
@@ -139,3 +143,17 @@ class Preprocessor:
         end_index = input_file.index(AssemblerDirectives.END.name)
 
         return start_index, end_index
+
+    @staticmethod
+    def __hex_to_decimal(number: str) -> int:
+        """
+        Checks whether a string begins with '$'
+        If so, it converts the hex number to decimal
+        Returns the converted number or the original number
+        """
+        if not number.startswith('$'):
+            return int(number)
+
+        num_no_prefix = number[1:]
+
+        return int(num_no_prefix, 16)
