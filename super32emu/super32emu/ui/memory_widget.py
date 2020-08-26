@@ -1,7 +1,6 @@
-from .code_editor import *
-from PySide2.QtGui import QFont, QTextOption
-from PySide2.QtGui import QTextCursor
+from PySide2.QtGui import QTextOption
 
+from .code_editor import *
 from .ui_style import UiStyle
 
 
@@ -23,6 +22,12 @@ class MemoryWidget(LineNumberEditor):
 
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
+
+        # TODO Multiplying by the actual line character count (42) results in a vertical scroll bar
+        # TODO Work-around by multiplying with a "magical number" (48)
+        metrics = QFontMetrics(UiStyle.get_font())
+        text_width = metrics.width('0') * (42 + 6)
+        self.setFixedWidth(text_width)
 
         self.connect(self.verticalScrollBar(), SIGNAL('sliderMoved(int)'), self.storeScrollBarValue)
 
