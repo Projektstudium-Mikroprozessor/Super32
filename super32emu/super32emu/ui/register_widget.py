@@ -21,10 +21,11 @@ class RegisterWidget(QWidget):
         self.text_input.setFont(UiStyle.get_font())
         self.text_input.setAlignment(Qt.AlignRight)
 
-        # TODO Multiplying by the actual line character count (8) results in a vertical scroll bar
-        # TODO Work-around by multiplying with a "magical number" (9)
+        # TODO Multiplying by the actual line character count (8)
+        #  does not set the width to allow for 8 characters.
+        #  Workaround by multiplying with a "magical number" (9)
         metrics = QFontMetrics(self.text_input.font())
-        text_width = metrics.width('0') * 8
+        text_width = metrics.width('0') * (8 + 1)
         self.text_input.setFixedWidth(text_width)
 
         self.__fixed = fixed_value

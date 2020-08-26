@@ -23,8 +23,9 @@ class MemoryWidget(LineNumberEditor):
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
 
-        # TODO Multiplying by the actual line character count (42) results in a vertical scroll bar
-        # TODO Work-around by multiplying with a "magical number" (48)
+        # TODO Multiplying by the actual line character count (42)
+        #   results in a horizontal scrollbar when a vertical scrollbar is present.
+        #   Workaround by multiplying with a "magical number" (48).
         metrics = QFontMetrics(UiStyle.get_font())
         text_width = metrics.width('0') * (42 + 6)
         self.setFixedWidth(text_width)
