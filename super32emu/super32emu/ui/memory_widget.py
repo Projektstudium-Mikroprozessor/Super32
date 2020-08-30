@@ -1,7 +1,6 @@
-from .code_editor import *
-from PySide2.QtGui import QFont, QTextOption
-from PySide2.QtGui import QTextCursor
+from PySide2.QtGui import QTextOption
 
+from .code_editor import *
 from .ui_style import UiStyle
 
 
@@ -17,9 +16,31 @@ class MemoryWidget(LineNumberEditor):
 
     def __init__(self):
         super().__init__()
+
+        # Used to remember the position to which the user scrolled
+        self.scrollBarValue = 0
+
         self.setReadOnly(True)
         self.setWordWrapMode(QTextOption.NoWrap)
 
+        # TODO Multiplying by the actual line character count (42)
+        #   results in a horizontal scrollbar when a vertical scrollbar is present.
+        #   Workaround by multiplying with a "magical number" (48).
+        metrics = QFontMetrics(UiStyle.get_font())
+        text_width = metrics.width('0') * (42 + 6)
+        self.setFixedWidth(text_width)
+
+        self.connect(self.verticalScrollBar(), SIGNAL('sliderMoved(int)'), self.storeScrollBarValue)
+
+    def storeScrollBarValue(self, value: int):
+        self.scrollBarValue = value
+
+    def setPlainText(self, text: str):
+        super(MemoryWidget, self).setPlainText(text)
+
+        # Restore vertical scroll position
+        self.verticalScrollBar().setValue(self.scrollBarValue)
+        
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
 
