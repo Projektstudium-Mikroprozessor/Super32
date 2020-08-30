@@ -127,7 +127,7 @@ class EmulatorWidget(QWidget):
         self.symbol_group.setLayout(self.symbol_layout)
 
         symbol = QLabel(self.tr("Symbol"))
-        self.symbol_layout.addRow(self.tr("Address"), symbol)
+        self.symbol_layout.addRow(self.tr("Value"), symbol)
 
     def get_register(self, index):
         """Sets the value of a register chosen by its index"""
@@ -176,7 +176,7 @@ class EmulatorWidget(QWidget):
         self.storage.setPlainText(self.__beautify_storage(value))
 
     def set_symbols(self, symboltable: dict):
-        """Fills the symboltable with parsed labels and addresses"""
+        """Fills the symboltable with parsed labels and values"""
 
         num_rows = self.symbol_layout.rowCount()
         for _ in range(1, num_rows):
@@ -191,13 +191,15 @@ class EmulatorWidget(QWidget):
             symbol.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred))
             symbol.setText(entry)
             symbol.setFont(font)
-            address = QLineEdit()
-            address.setReadOnly(True)
-            address.setFixedWidth(50)
-            address.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred))
-            address.setFont(font)
-            address.setText(str(symboltable[entry]))
-            self.symbol_layout.addRow(address, symbol)
+
+            value = QLineEdit()
+            value.setReadOnly(True)
+            value.setFixedWidth(50)
+            value.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred))
+            value.setFont(font)
+            value.setText(str(symboltable[entry]))
+
+            self.symbol_layout.addRow(symbol, value)
 
     def highlight_memory_line(self, line_number: int, color=Qt.yellow):
         self.storage.highlightLine(line_number, color)
