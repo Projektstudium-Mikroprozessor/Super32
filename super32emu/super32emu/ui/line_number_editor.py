@@ -100,7 +100,7 @@ class LineNumberEditor(QPlainTextEdit):
         selection = QTextEdit.ExtraSelection()
         selection.format.setBackground(lineColor)
         selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-        selection.cursor = QTextCursor(self.document().findBlockByLineNumber(line_number))
+        selection.cursor = QTextCursor(self.document().findBlockByNumber(line_number))
         selection.cursor.clearSelection()
         self.extraSelections.append(selection)
         self.setExtraSelections(self.extraSelections)
