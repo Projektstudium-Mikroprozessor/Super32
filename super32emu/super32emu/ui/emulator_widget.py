@@ -199,7 +199,7 @@ class EmulatorWidget(QWidget):
             value.setFont(font)
             value.setText(str(symboltable[entry]))
 
-            self.symbol_layout.addRow(symbol, value)
+            self.symbol_layout.addRow(value, symbol)
 
     def highlight_memory_line(self, line_number: int, color=Qt.yellow):
         self.storage.highlightLine(line_number, color)
