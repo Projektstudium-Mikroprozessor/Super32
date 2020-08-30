@@ -1,10 +1,10 @@
 """python emulator"""
-from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout, QWidget, QPlainTextEdit, QFormLayout, QLabel, QSizePolicy
-from PySide2.QtCore import Qt, Slot
-from PySide2.QtGui import QIcon, QFont
-from .register_widget import RegisterWidget
+from PySide2.QtCore import Qt, QSize
+from PySide2.QtWidgets import QDockWidget, QGridLayout, QGroupBox, QLineEdit, QVBoxLayout, \
+    QWidget, QFormLayout, QLabel, QSizePolicy
+
 from .memory_widget import *
-import os
+from .register_widget import RegisterWidget
 
 
 class EmulatorDockWidget(QDockWidget):
@@ -14,6 +14,7 @@ class EmulatorDockWidget(QDockWidget):
         QDockWidget.__init__(self)
 
         self.emulator = EmulatorWidget()
+        self.emulator.setSizeHint(600, 0)
         self.setWindowTitle(self.tr("Hardware-Monitor"))
         self.setAllowedAreas(Qt.RightDockWidgetArea)
         self.setStyleSheet(
@@ -69,6 +70,16 @@ class EmulatorWidget(QWidget):
         self.__create_storage_group()
         self.__create_symbol_group()
 
+        self._sizehint = None
+
+    def setSizeHint(self, width, height):
+        self._sizehint = QSize(width, height)
+
+    def sizeHint(self):
+        if self._sizehint is not None:
+            return self._sizehint
+        return super(EmulatorWidget, self).sizeHint()
+
     def __create_register_group(self):
         self.index = 0
         self.register = []
@@ -107,11 +118,11 @@ class EmulatorWidget(QWidget):
 
     def __create_symbol_group(self):
         self.symbol_layout = QFormLayout()
-        self.symbol_layout.setHorizontalSpacing(0)
-        self.symbol_layout.setVerticalSpacing(0)
+        self.symbol_layout.setHorizontalSpacing(5)
+        self.symbol_layout.setVerticalSpacing(5)
         self.symbol_layout.setLabelAlignment(Qt.AlignLeft)
         self.symbol_layout.setFieldGrowthPolicy(
-            QFormLayout.AllNonFixedFieldsGrow)
+            QFormLayout.ExpandingFieldsGrow)
         self.symbol_layout.setFormAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.symbol_group.setLayout(self.symbol_layout)
 
@@ -125,7 +136,7 @@ class EmulatorWidget(QWidget):
 
         return self.register[index].get_value()
 
-    def set_register_background(self, index, color = "white"):
+    def set_register_background(self, index, color="white"):
         """Resets the register background color"""
         if index < 0 or index > 32:
             raise Exception('Register out of index')
@@ -176,10 +187,14 @@ class EmulatorWidget(QWidget):
         for entry in symboltable:
             symbol = QLineEdit()
             symbol.setReadOnly(True)
+            symbol.setMinimumWidth(50)
+            symbol.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred))
             symbol.setText(entry)
             symbol.setFont(font)
             address = QLineEdit()
             address.setReadOnly(True)
+            address.setFixedWidth(50)
+            address.setSizePolicy(QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred))
             address.setFont(font)
             address.setText(str(symboltable[entry]))
             self.symbol_layout.addRow(address, symbol)

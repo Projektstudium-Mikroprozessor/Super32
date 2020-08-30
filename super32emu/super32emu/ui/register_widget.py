@@ -1,7 +1,6 @@
 """python emulator"""
-from PySide2.QtCore import QTimer
+from PySide2.QtGui import QFontMetrics, Qt
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget
-from PySide2.QtGui import QFont, QFontMetrics, Qt
 
 from .ui_style import UiStyle
 
@@ -21,7 +20,12 @@ class RegisterWidget(QWidget):
         self.text_input.setInputMask(mask)
         self.text_input.setFont(UiStyle.get_font())
         self.text_input.setAlignment(Qt.AlignRight)
-        text_width = QFontMetrics(self.text_input.font()).maxWidth() * 10
+
+        # TODO Multiplying by the actual line character count (8)
+        #  does not set the width to allow for 8 characters.
+        #  Workaround by multiplying with a "magical number" (9)
+        metrics = QFontMetrics(self.text_input.font())
+        text_width = metrics.width('0') * (8 + 1)
         self.text_input.setFixedWidth(text_width)
 
         self.__fixed = fixed_value
