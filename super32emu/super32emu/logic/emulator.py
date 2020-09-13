@@ -20,8 +20,8 @@ class Emulator:
 
         self.emulator_widget.reset_all_registers()
 
-        self.emulator_widget.set_z(0, False)
-        self.emulator_widget.set_pc(0, False)
+        self.emulator_widget.set_z(0)
+        self.emulator_widget.set_pc(0)
         self.emulator_widget.set_storage(''.ljust(2**10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
 
@@ -56,7 +56,7 @@ class Emulator:
 
         self.emulator_widget.reset_highlighted_memory_lines()
         self.emulator_widget.reset_all_register_backgrounds()
-        self.emulator_widget.set_z(0, False)
+        self.emulator_widget.set_z(0)
 
         instructionset = self.memory[self.row_counter]
         self.__parse_instructionset(instructionset)
@@ -71,13 +71,13 @@ class Emulator:
         self.__highlight_editor_line()
 
         if self.changed_memory_address is not None:
-            self.emulator_widget.highlight_memory_line(self.changed_memory_address, Qt.green)
+            self.emulator_widget.highlight_memory_line(self.changed_memory_address, Qt.lightGray)
             self.changed_memory_address = None
 
     def end_emulation(self):
         # Reset GUI
-        self.emulator_widget.set_z(0, False)
-        self.emulator_widget.set_pc(0, False)
+        self.emulator_widget.set_z(0)
+        self.emulator_widget.set_pc(0)
         self.emulator_widget.reset_pc_background()
         self.emulator_widget.set_storage(''.ljust(2 ** 10, '0'))
         self.emulator_widget.set_symbols({"-": "-"})
@@ -188,6 +188,9 @@ class Emulator:
 
         register = self.__get_register_index(target)
         result_hex = hex(result)[2:].upper()
+
+        self.__highlight_register(first_source)
+        self.__highlight_register(second_source)
         self.emulator_widget.set_register(register, result_hex)
 
         logging.debug(f"Arithmetic: Handling contents from registers {self.__get_register_index(first_source)}"
@@ -254,6 +257,8 @@ class Emulator:
 
         value = self.__get_register_value(r1)
         value_bin = bin(value)[2:].rjust(32, '0')
+
+        self.__highlight_register(r1)
         self.memory[address] = value_bin
 
         logging.debug(f"Save: Saving content from register {self.__get_register_index(r1)} to address {address * 4}")
@@ -283,6 +288,10 @@ class Emulator:
 
         current_address_without_offset = self.row_counter - self.code_address // 4
         return self.editor_line_numbers[current_address_without_offset]
+
+    def __highlight_register(self, register):
+        register_num = BitArray(bin=register).uint
+        self.emulator_widget.set_register_background(register_num, "lightGray")
 
     def __highlight_editor_line(self):
         self.editor_widget.reset_highlighted_lines()

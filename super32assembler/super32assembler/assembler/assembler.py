@@ -145,8 +145,8 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[2]
-        if self.__is_int(label_or_number):
-            offset = int(label_or_number)
+        if self.__is_number(label_or_number):
+            offset = self.__hex_to_decimal(label_or_number)
             tokens[2] = Bits(int=offset, length=16).bin
         else:  # label
             address = self.__validate_label(label_or_number)
@@ -179,8 +179,8 @@ class Assembler():
                     tokens[i] = registers[reg]
 
         label_or_number = tokens[-1]
-        if self.__is_int(label_or_number):  # absolute address
-            address = int(label_or_number)
+        if self.__is_number(label_or_number):
+            address = self.__hex_to_decimal(label_or_number)
             tokens[-1] = Bits(int=address, length=16).bin
         else:  # label
             address = self.__validate_label(label_or_number)
@@ -205,7 +205,7 @@ class Assembler():
         branch_address = int(start_address / REG_SIZE - 1)
         branch = self.__parse_branch(
             0,
-            ['BEQ', 'R1', 'R2', "{ADDRESS}".format(ADDRESS=branch_address)],
+            ['BEQ', 'R30', 'R30', "{ADDRESS}".format(ADDRESS=branch_address)],
             commands['branch'],
             registers
         )
@@ -215,7 +215,7 @@ class Assembler():
     def __generate_end(self, zeros_constants, commands, registers):
         branch = self.__parse_branch(
             0,
-            ['BEQ', 'R1', 'R2', "-1"],
+            ['BEQ', 'R30', 'R30', "-1"],
             commands['branch'],
             registers
         )
@@ -223,9 +223,31 @@ class Assembler():
         return zeros_constants
 
     @staticmethod
-    def __is_int(s: str) -> bool:
+    def __is_number(s: str) -> bool:
+        """
+        Checks whether a string represents a number
+        Returns true if the string represents a hex number ('$') or an integer.
+        Returns false otherwise.
+        """
+        if s.startswith('$'):
+            return True
+
         try:
             int(s)
             return True
         except ValueError:
             return False
+
+    @staticmethod
+    def __hex_to_decimal(number: str) -> int:
+        """
+        Checks whether a string begins with '$'
+        If so, it converts the hex number to decimal
+        Returns the converted number or the original number
+        """
+        if not number.startswith('$'):
+            return int(number)
+
+        num_no_prefix = number[1:]
+
+        return int(num_no_prefix, 16)

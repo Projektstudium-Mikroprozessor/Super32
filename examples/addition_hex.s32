@@ -1,0 +1,16 @@
+' Simply calculates 8 + 4
+
+ORG $C
+DEFINE $A
+DEFINE $B
+
+ORG $18
+START
+
+LW R10, $C(R0)
+LW R11, $10(R0)
+
+ADD R10, R10, R11
+SW R10, $C(R5)
+
+END
